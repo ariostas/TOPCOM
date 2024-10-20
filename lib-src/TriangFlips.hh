@@ -63,6 +63,7 @@ public:
 			       const SimplicialComplex&,
 			       const SymmetryGroup&,
 			       const SymmetryGroup&, 
+			       const bool = false,
 			       const bool = false);
   // stream input/output:
   inline std::ostream& write  (std::ostream&) const;

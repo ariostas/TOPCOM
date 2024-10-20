@@ -65,6 +65,9 @@ public:
   inline bool adds_vertex() const {
     return (first.card() == 1);
   }
+  inline bool is_balanced() const {
+    return (first.card() == second.card());
+  }
 };
 
 class Flip : public flip_type {

@@ -339,9 +339,9 @@ int ComputeTriangs::run(const int flags) {
     if (CommandlineOptions::verbose()) {
       std::cerr << "... done." << std::endl;
 #ifndef STL_SYMMETRIES
-      std::cerr << seed_symmetries.load() << " symmetries in total." << std::endl;
+      std::cerr << seed_symmetries.load() << " symmetries in total in seed." << std::endl;
 #else
-      std::cerr << seed_symmetries.size() << " symmetries in total." << std::endl;
+      std::cerr << seed_symmetries.size() << " symmetries in total in seed." << std::endl;
 #endif
       if (CommandlineOptions::debug()) {
 	std::cerr << "symmetries:" << std::endl;
@@ -366,6 +366,7 @@ int ComputeTriangs::run(const int flags) {
     }
     if (CommandlineOptions::verbose()) {
       std::cerr << "seed: " << seed << std::endl;
+      std::cerr << "containing " << seed.card() << " simplices" << std::endl;
       std::cerr << "using the following " << seed.support().card() << " vertices: " 
 		<< seed.support() << std::endl;
       std::cerr << "... done." << std::endl;

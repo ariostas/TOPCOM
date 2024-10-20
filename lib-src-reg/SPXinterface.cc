@@ -119,7 +119,7 @@ bool SPXinterface::has_interior_point() {
       if (CommandlineOptions::debug()) {
 	_soplex_obj.dumpFile("soplex.lp");
       }
-      delete solbuf_ptr;
+      delete[] solbuf_ptr;
     }
   
     return true;

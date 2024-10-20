@@ -27,6 +27,7 @@ private:
   static bool      _fine_only;
   static bool      _reduce_points;
   static bool      _dont_add_points;
+  static bool      _dont_change_card;
   static bool      _output_triangs;
   static bool      _output_flips;
   static bool      _compute_all;
@@ -68,6 +69,7 @@ public:
   inline static bool      fine_only()               { return _fine_only; }
   inline static bool      reduce_points()           { return _reduce_points; }
   inline static bool      dont_add_points()         { return _dont_add_points; }
+  inline static bool      dont_change_card()        { return _dont_change_card; }
   inline static bool      compute_all()             { return _compute_all; }
   inline static bool      preprocess()              { return _preprocess; }
   inline static bool      output_triangs()          { return _output_triangs; }

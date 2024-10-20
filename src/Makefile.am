@@ -41,7 +41,6 @@ santos_triang \
 santos_dim4_triang \
 santos_22_triang
 
-bench_SOURCES                      = bench.cc
 B_A_SOURCES                        = B_A.cc
 B_A_center_SOURCES                 = B_A_center.cc
 B_D_SOURCES                        = B_D.cc

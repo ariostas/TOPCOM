@@ -38,7 +38,8 @@ void TriangFlips::_add_new_flips(const Chirotope&         chiro,
 				 const SimplicialComplex& restriction,
 				 const SymmetryGroup&     symmetries,
 				 const SymmetryGroup&     tn_symmetries,
-				 const bool               forbid_vertex_removal) {
+				 const bool               forbid_vertex_removal,
+				 const bool               forbid_card_change) {
 
 #ifndef STL_CONTAINERS
   static HashSet<dependent_set_type> dependent_sets;
@@ -106,6 +107,9 @@ void TriangFlips::_add_new_flips(const Chirotope&         chiro,
       if (fliprep) {
 	// succeeded:
 	if (forbid_vertex_removal && fliprep.kills_vertex()) {
+	  continue;
+	}
+	if (forbid_card_change && !fliprep.is_balanced()) {
 	  continue;
 	}
 // 	else if (CommandlineOptions::reduce_points() && !fliprep.kills_vertex()) {

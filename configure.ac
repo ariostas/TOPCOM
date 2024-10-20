@@ -1,8 +1,9 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT()
+AC_INIT(TOPCOM, 0.17.8)
+AC_CONFIG_SRCDIR(.)
 
 dnl Init automake.
-AM_INIT_AUTOMAKE(TOPCOM, 0.17.5)
+AM_INIT_AUTOMAKE
 
 dnl Checks for programs.
 AC_PROG_CC

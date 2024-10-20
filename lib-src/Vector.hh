@@ -41,11 +41,13 @@ public:
   // operations out of place:
   friend Field inner_product(const Vector&, const Vector&);
   // boolean expressions:
-  friend bool lex_abs_compare(const Vector&, const Vector&, const size_type = 0);
   // overload of istream with canonicalize:
   inline std::istream& read(std::istream&);
   inline friend std::istream& operator>>(std::istream&, Vector&);
 };
+
+// helpers:
+bool lex_abs_compare(const Vector&, const Vector&, const size_type = 0);
 
 // constructors:
 inline Vector::Vector() : 

@@ -21,6 +21,7 @@ bool      CommandlineOptions::_input_chiro             = false;
 bool      CommandlineOptions::_fine_only               = false;
 bool      CommandlineOptions::_reduce_points           = false;
 bool      CommandlineOptions::_dont_add_points         = false;
+bool      CommandlineOptions::_dont_change_card        = false;
 bool      CommandlineOptions::_output_triangs          = false;
 bool      CommandlineOptions::_output_flips            = false;
 bool      CommandlineOptions::_compute_all             = false;
@@ -93,6 +94,7 @@ void CommandlineOptions::init(const int argc, const char** argv) {
       std::cout << "--regular            : consider only regular triangulations" << std::endl;
       std::cout << "--noinsertion        : never use a point that is unused in the seed triangulation." << std::endl;
       std::cout << "--reducepoints       : try to remove the number of use points, reported to stderr." << std::endl;
+      std::cout << "--keepcard           : never change the cardinality of triangulations by flipping." << std::endl;
       std::cout << std::endl;
 
       std::cout << "options concerning symmetries:" << std::endl;
@@ -232,6 +234,11 @@ void CommandlineOptions::init(const int argc, const char** argv) {
       _dont_add_points = true;
 
       std::cerr << "--noinsertion   : never add points activated" << std::endl;
+    }
+    if (strcmp(argv[i], "--keepcard") == 0) {
+      _dont_change_card = true;
+
+      std::cerr << "--keepcard   : never change cardinality of triangulations by flipping activated" << std::endl;
     }
 
     // options concerning symmetries:
