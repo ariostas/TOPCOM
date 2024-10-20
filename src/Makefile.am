@@ -1,0 +1,78 @@
+bin_PROGRAMS = \
+chiro2allfinetriangs \
+chiro2alltriangs \
+chiro2circuits \
+chiro2dual \
+chiro2finetriang \
+chiro2finetriangs \
+chiro2mintriang \
+chiro2nallfinetriangs \
+chiro2nalltriangs \
+chiro2nfinetriangs \
+chiro2ntriangs \
+chiro2placingtriang \
+chiro2triangs \
+cocircuits2facets \
+cross \
+cube \
+cyclic \
+lattice \
+points2chiro \
+points2finetriang \
+points2finetriangs \
+points2flips \
+points2nfinetriangs \
+points2nflips \
+points2ntriangs \
+points2placingtriang \
+points2triangs \
+santos_triang \
+santos_dim4_triang \
+santos_22_triang
+
+chiro2allfinetriangs_SOURCES       = chiro2allfinetriangs.cc
+chiro2alltriangs_SOURCES           = chiro2alltriangs.cc
+chiro2circuits_SOURCES             = chiro2circuits.cc
+chiro2dual_SOURCES                 = chiro2dual.cc
+chiro2finetriang_SOURCES           = chiro2finetriang.cc
+chiro2finetriangs_SOURCES          = chiro2finetriangs.cc
+chiro2mintriang_SOURCES            = chiro2mintriang.cc
+chiro2nallfinetriangs_SOURCES      = chiro2nallfinetriangs.cc
+chiro2nalltriangs_SOURCES          = chiro2nalltriangs.cc
+chiro2nfinetriangs_SOURCES         = chiro2nfinetriangs.cc
+chiro2ntriangs_SOURCES             = chiro2ntriangs.cc
+chiro2placingtriang_SOURCES        = chiro2placingtriang.cc
+chiro2triangs_SOURCES              = chiro2triangs.cc
+cocircuits2facets_SOURCES          = cocircuits2facets.cc
+cross_SOURCES                      = cross.cc
+cube_SOURCES                       = cube.cc
+cyclic_SOURCES                     = cyclic.cc
+lattice_SOURCES	                   = lattice.cc
+points2chiro_SOURCES               = points2chiro.cc
+points2finetriang_SOURCES          = points2finetriang.cc
+points2finetriangs_SOURCES         = points2finetriangs.cc
+points2flips_SOURCES               = points2flips.cc
+points2nfinetriangs_SOURCES        = points2nfinetriangs.cc
+points2nflips_SOURCES              = points2nflips.cc
+points2ntriangs_SOURCES            = points2ntriangs.cc
+points2placingtriang_SOURCES       = points2placingtriang.cc
+points2triangs_SOURCES             = points2triangs.cc
+santos_triang_SOURCES              = santos_triang.cc
+santos_dim4_triang_SOURCES         = santos_dim4_triang.cc
+santos_22_triang_SOURCES           = santos_22_triang.cc
+
+LDADD           = ../lib-src/libTOPCOM.a \
+                  ../lib-src-reg/libCHECKREG.a \
+                  ../wrap-gmp-gcc3/libwrapgmp-gcc3.a \
+                  ../external/lib/libcddgmp.a \
+                  ../external/lib/libgmp.a
+
+INCLUDES        = -I../lib-src
+INCLUDES       += -I../lib-src-reg
+INCLUDES       += -I../wrap-gmp-gcc3 
+INCLUDES       += -I../external/include
+INCLUDES       += -I$(includedir)
+
+AM_CPPFLAGS     = -DVERBOSE -DGMPRATIONAL -ftemplate-depth-30
+
+AM_CXXFLAGS     = -O2

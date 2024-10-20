@@ -1,0 +1,94 @@
+##############################################################################
+## Makefile for building external packages
+## 2003/01/27 jr
+##############################################################################
+GMP_DONE     = gmp_done
+CDD_DONE     = cdd_done
+
+GMP_NAME     = gmp
+CDD_NAME     = cddlib
+
+GMP_INCLUDES = include/gmp.h
+CDD_INCLUDES = include/cdd.h  include/cddmp.h  include/cddtypes.h  include/setoper.h
+
+GMP_LIBS     = lib/libgmp.a
+CDD_LIBS     = lib/libcddgmp.a
+
+GMP_TAR      = $(GMP_NAME)-$(GMP_VERSION).tar.gz
+CDD_TAR      = $(CDD_NAME)-$(CDD_VERSION).tar.gz
+
+GMP_DIR      = $(GMP_NAME)-$(GMP_VERSION)
+CDD_DIR      = $(CDD_NAME)-$(CDD_VERSION)
+
+GMP_VERSION = 4.1
+CDD_VERSION = 0.93a
+
+GMP_DIR = $(GMP_NAME)-$(GMP_VERSION)
+CDD_DIR = $(CDD_NAME)-$(CDD_VERSION)
+
+all: gmp cdd
+
+gmp: $(GMP_DONE)
+
+cdd: $(CDD_DONE)
+
+$(GMP_DONE): $(GMP_DIR)
+	@echo ==============================================================================
+	@echo making gmp ...
+	@echo ==============================================================================
+	csh -c 'cd $(GMP_DIR); ./configure --prefix=`pwd`/..'
+	make -C $(GMP_DIR)
+	make -C $(GMP_DIR) install	
+	@echo ==============================================================================
+	@echo ... done making gmp.
+	@echo ==============================================================================
+	touch $(GMP_DONE)
+
+$(CDD_DONE): $(CDD_DIR)
+	@echo ==============================================================================
+	@echo making cdd ...
+	@echo ==============================================================================
+	csh -c 'cd $(CDD_DIR); ./configure --prefix=`pwd`/..'
+	make -C $(CDD_DIR)
+	make -C $(CDD_DIR) install
+	@echo ==============================================================================
+	@echo ... done making cdd.
+	@echo ==============================================================================
+	touch $(CDD_DONE)
+
+$(GMP_DIR): $(GMP_TAR)
+	@echo ==============================================================================
+	@echo unpacking gmp ...
+	@echo ==============================================================================
+	tar xzvf $(GMP_TAR)
+	@echo ==============================================================================
+	@echo ... done unpacking gmp.
+	@echo ==============================================================================
+
+$(CDD_DIR): $(CDD_TAR)
+	@echo ==============================================================================
+	@echo unpacking cdd ...
+	@echo ==============================================================================
+	tar xzvf $(CDD_TAR)
+	@echo ==============================================================================
+	@echo ... done unpacking cdd.
+	@echo ==============================================================================
+
+.PHONY: clean clean_installdirs clean_gmp clean_cdd
+
+clean: clean_gmp clean_cdd
+
+clean_installdirs:
+	rm -rf include lib info bin
+
+clean_gmp:
+	rm -f $(GMP_DONE)
+	rm -rf $(GMP_DIR)
+	rm -rf include lib info bin
+
+clean_cdd:
+	rm -f $(CDD_DONE)
+	rm -rf $(CDD_DIR)
+
+
+# eof Makefile jr.
