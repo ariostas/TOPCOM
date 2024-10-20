@@ -71,7 +71,8 @@ public:
   inline const keyptr_type& keyptr()  const { return _keyptr; }
   inline const Key&         key()     const { return *_keyptr; }
   // comparison:
-  inline const bool operator==(const HashSetData<Key>& hsd) { return (key() == hsd.key()); }
+  inline const bool operator==(const HashSetData<Key>& hsd) const { return (key() == hsd.key()); }
+  inline const bool operator!=(const HashSetData<Key>& hsd) const { return !(key() == hsd.key()); }
   // iostream:
   inline std::ostream& write(std::ostream& ost) const {
     return ost << *_keyptr;

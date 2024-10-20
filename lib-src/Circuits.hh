@@ -30,7 +30,7 @@ public:
   // constructors:
   inline Circuit();
   inline Circuit(const Circuit&);
-  Circuit(const IntegerSet&, const Chirotope&);
+  Circuit(const Chirotope&, const IntegerSet&);
   // destructor:
   inline ~Circuit();
   // assignment:
@@ -129,8 +129,8 @@ inline std::istream& operator>>(std::istream& ist, Circuits& circuits) {
   return ist;
 }
 
-typedef Circuit                                  Cocircuit;
-typedef Circuits                                 Cocircuits;
+// typedef Circuit                                  Cocircuit;
+// typedef Circuits                                 Cocircuits;
 
 #endif
 

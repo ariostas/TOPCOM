@@ -543,18 +543,30 @@ PlainHashTable<HashData>& PlainHashTable<HashData>::operator=(const PlainHashTab
 template<class HashData>
 bool PlainHashTable<HashData>::operator==(const PlainHashTable<HashData>& ht) const {
   if (load() != ht.load()) {
-    return false;
+#ifdef DEBUG
+    std::cerr << load() << " (load) not equal to " << ht.load() << std::endl;
+    std::cerr << "thus " << *this << " not equal to " << ht << std::endl;
+#endif
+   return false;
   }
   for (typename PlainHashTable<HashData>::const_iterator iter = this->begin(); 
        iter != this->end(); 
        ++iter) {
     const typename PlainHashTable<HashData>::const_iterator finder(ht.find(iter->key()));
     if (finder != ht.end()) {
-      if (finder->data() != iter->data()) {
+      if (*finder != *iter) {
+#ifdef DEBUG
+	std::cerr << *finder << " not equal to " << *iter << std::endl;
+	std::cerr << "thus " << *this << " not equal to " << ht << std::endl;
+#endif
 	return false;
       }
     }
     else {
+#ifdef DEBUG
+      std::cerr << iter->key() << " not contained in " << ht << std::endl;
+      std::cerr << "thus " << *this << " not equal to " << ht << std::endl;
+#endif
       return false;
     }
   }
@@ -793,6 +805,7 @@ std::istream& PlainHashTable<HashData>::read(std::istream& ist) {
   char c;
   typename HashData::reader r;
 
+  clear();
   ist >> std::ws >> c;
   if (c == '[') {
     while (ist >> std::ws >> c) {

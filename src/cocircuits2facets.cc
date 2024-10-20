@@ -15,7 +15,7 @@ int main (const int argc, const char** argv) {
   }
   Cocircuits cocircuits;
   if (cocircuits.read_string(std::cin)) {
-    Facets(cocircuits).print_string(std::cout);
+    Facets(cocircuits).write(std::cout);
     return 0;
   }
   else {

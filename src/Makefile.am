@@ -2,6 +2,7 @@ bin_PROGRAMS = \
 chiro2allfinetriangs \
 chiro2alltriangs \
 chiro2circuits \
+chiro2cocircuits \
 chiro2dual \
 chiro2finetriang \
 chiro2finetriangs \
@@ -18,10 +19,15 @@ cube \
 cyclic \
 hypersimplex \
 lattice \
+points2allfinetriangs \
+points2alltriangs \
 points2chiro \
+points2facets \
 points2finetriang \
 points2finetriangs \
 points2flips \
+points2nallfinetriangs \
+points2nalltriangs \
 points2nfinetriangs \
 points2nflips \
 points2ntriangs \
@@ -34,6 +40,7 @@ santos_22_triang
 chiro2allfinetriangs_SOURCES       = chiro2allfinetriangs.cc
 chiro2alltriangs_SOURCES           = chiro2alltriangs.cc
 chiro2circuits_SOURCES             = chiro2circuits.cc
+chiro2cocircuits_SOURCES           = chiro2cocircuits.cc
 chiro2dual_SOURCES                 = chiro2dual.cc
 chiro2finetriang_SOURCES           = chiro2finetriang.cc
 chiro2finetriangs_SOURCES          = chiro2finetriangs.cc
@@ -50,10 +57,15 @@ cube_SOURCES                       = cube.cc
 cyclic_SOURCES                     = cyclic.cc
 hypersimplex_SOURCES               = hypersimplex.cc
 lattice_SOURCES	                   = lattice.cc
+points2allfinetriangs_SOURCES      = points2allfinetriangs.cc
+points2alltriangs_SOURCES          = points2alltriangs.cc
 points2chiro_SOURCES               = points2chiro.cc
+points2facets_SOURCES              = points2facets.cc
 points2finetriang_SOURCES          = points2finetriang.cc
 points2finetriangs_SOURCES         = points2finetriangs.cc
 points2flips_SOURCES               = points2flips.cc
+points2nallfinetriangs_SOURCES     = points2nallfinetriangs.cc
+points2nalltriangs_SOURCES         = points2nalltriangs.cc
 points2nfinetriangs_SOURCES        = points2nfinetriangs.cc
 points2nflips_SOURCES              = points2nflips.cc
 points2ntriangs_SOURCES            = points2ntriangs.cc

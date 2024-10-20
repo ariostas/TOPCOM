@@ -130,6 +130,37 @@ public:
     }
     _no_of_marked = 0;
   }
+
+  // stream output/input:
+  std::ostream& write(std::ostream& ost) const {
+    flips_type::write(ost);
+    return ost;
+  }
+  std::istream& read(std::istream& ist) {
+    flips_type::read(ist);
+    _no_of_marked = 0;
+    
+    for (iterator iter = begin(); iter != end(); ++iter) {
+#ifndef STL_FLIPS
+      if (iter->data()) {
+#else
+      if ((*iter).second) {;
+#endif
+	++_no_of_marked;
+      }
+    }
+
+    return ist;
+  }
+
+  friend inline std::ostream& operator<<(std::ostream& ost, const MarkedFlips& mf) {
+    return mf.write(ost);
+  }
+  
+  friend inline std::istream& operator>>(std::istream& ist, MarkedFlips& mf) {
+    return mf.read(ist);
+  }
+  
 };
 
 #endif

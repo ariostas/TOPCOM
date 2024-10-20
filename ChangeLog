@@ -1,5 +1,16 @@
+version 0.15.4: updated documentation
+version 0.15.3: fixed dump file processing
+version 0.15.2: removed extra qualification "__is_const_iterator::" and similar
+	fixed dump support by adding "clear()" at the beginning of parsing hash tables
+version 0.15.1: patched cdd because of memory leak
+version 0.15.0: new commandline option "--nonregular": it triggers an output filter
+	so that only the nonregular triangulations are output.  As opposed to
+	"--regular" it does not reduce the number of triangulations explored;
+	provided some new clients for points that have been there already for chirotopes
+	updated to gmp-4.2.1 and cddlib-0.94b
 version 0.14.0: first version that compiles on gcc4
-	chiro2* returns an error now if --regular is given as an option (regularity not defined without coordinates)
+	chiro2* returns an error now if --regular is given as an option 
+	(regularity is not a well-defined concept without coordinates)
 version 0.13.3: corrections in template specializations
 	new generator for hypersimplices
 	new examples

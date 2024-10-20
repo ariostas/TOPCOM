@@ -23,7 +23,7 @@ const SimplicialComplex Symmetry::operator()(const SimplicialComplex& sc) const 
 
 const TriangNode Symmetry::operator()(const TriangNode& tn) const {
   SimplicialComplex result_complex((*this)((SimplicialComplex)tn));
-  return TriangNode(tn.no(), tn.rank(), result_complex, *tn.chiroptr());
+  return TriangNode(tn.no(), tn.rank(), result_complex);
 }
  
 const FlipRep Symmetry::operator()(const FlipRep& fr) const {

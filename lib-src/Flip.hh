@@ -40,7 +40,7 @@ public:
     fliprep_type()  {}
   inline FlipRep(const FlipRep& f) :
     fliprep_type(f) {}
-  FlipRep (const dependent_set_type&, const TriangNode&);
+  FlipRep (const Chirotope& chiro, const dependent_set_type&, const TriangNode&);
   inline FlipRep (const Circuit& c) :
     fliprep_type(c) {}
   // destructor:
@@ -76,8 +76,8 @@ public:
     flip_type(f) {}
   inline Flip(const TriangNode& tn, const FlipRep& fliprep) :
     flip_type()  { _construct(tn, fliprep); }
-  inline Flip(const TriangNode& tn, const dependent_set_type& depset) :
-    flip_type()  { _construct(tn, depset); }
+  inline Flip(const Chirotope& chiro, const TriangNode& tn, const dependent_set_type& depset) :
+    flip_type()  { _construct(chiro, tn, depset); }
   // destructor:
   inline ~Flip() {}
   // assignment:
@@ -93,7 +93,7 @@ public:
 private:
   // internal algorithms:
   void _construct(const TriangNode&, const Circuit&);
-  void _construct(const TriangNode& tn, const dependent_set_type& ds);
+  void _construct(const Chirotope& chiro, const TriangNode& tn, const dependent_set_type& ds);
 };
 
 #endif

@@ -24,14 +24,23 @@ InteriorFacets::InteriorFacets(const Facets& facets) :
   Permutation perm(no, rank);
   do {
     Simplex simp(perm);
+    if (CommandlineOptions::debug()) {
+      std::cerr << "computing interior facets of " << simp << " ..." << std::endl;
+    }
     if (facets.contains(simp) || facets.contains_face(simp)) {
       continue;
     }
     Simplex facet(simp);
     for (Simplex::iterator iter = simp.begin(); iter != simp.end(); ++iter) {
       facet -= *iter;
+      if (CommandlineOptions::debug()) {
+	std::cerr << "checking facet " << facet << " ..." << std::endl;
+      }
       if (!facets.contains(facet) && !facets.contains_face(facet)) {
 	perm_interiors += facet;
+      }
+      if (CommandlineOptions::debug()) {
+	std::cerr << "... done." << std::endl;
       }
       facet += *iter;
     }
@@ -47,6 +56,9 @@ InteriorFacets::InteriorFacets(const Facets& facets) :
       std::cerr << count << " simplices processed so far." << std::endl;
     }
   } while (perm.lexnext());
+  if (CommandlineOptions::debug()) {
+    std::cerr << "... done.  Table: " << *this << std::endl;
+  }
 }
 
 // eof InteriorFacets.cc

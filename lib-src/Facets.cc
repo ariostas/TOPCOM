@@ -13,21 +13,35 @@
 #include "Facets.hh"
 
 Facets::Facets(const Cocircuits& cocircuits) : 
-  facets_data(), _no(cocircuits.no()), _rank(cocircuits.no() - cocircuits.rank()) {
+  facets_data(), _no(cocircuits.no()), _rank(cocircuits.rank()) {
   const IntegerSet groundset(0, cocircuits.no());
   for (Cocircuits::const_iterator iter = cocircuits.begin();
        iter != cocircuits.end();
        ++iter) {
     if (iter->dataptr()->first.is_empty()) {
-      insert(groundset - iter->dataptr()->second);
+      const IntegerSet& new_facet(groundset - iter->dataptr()->second);
+      if (CommandlineOptions::debug()) {
+	std::cerr << "insert new facet " << new_facet << " ..." << std::endl;
+      }
+      insert(new_facet);
+      if (CommandlineOptions::debug()) {
+	std::cerr << "... done." << std::endl;
+      }
     }
     else if (iter->dataptr()->second.is_empty()) {
-      insert(groundset - iter->dataptr()->first);
+      const facet_type& new_facet(groundset - iter->dataptr()->first);
+      if (CommandlineOptions::debug()) {
+	std::cerr << "insert new facet " << new_facet << " ..." << std::endl;
+      }
+      insert(new_facet);
+      if (CommandlineOptions::debug()) {
+	std::cerr << "... done." << std::endl;
+      }
     }
   }
 }
 
-std::ostream& Facets::print_string(std::ostream& ost) {
+std::ostream& Facets::write(std::ostream& ost) const {
   ost << _no << ',' << _rank << ':' << std::endl;
   ost << '{' << std::endl;
   for (iterator iter = begin(); iter != end(); ++iter) {
@@ -37,7 +51,7 @@ std::ostream& Facets::print_string(std::ostream& ost) {
   return ost;
 }
 
-std::istream& Facets::read_string(std::istream& ist) {
+std::istream& Facets::read(std::istream& ist) {
   char c;
 
   clear();

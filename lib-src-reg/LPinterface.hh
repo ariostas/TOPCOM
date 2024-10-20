@@ -77,6 +77,7 @@ inline LPinterface::~LPinterface() {
   dd_FreeLPSolution(_solptr);
   dd_FreeLPData    (_lpptr);
   dd_FreeMatrix    (_matrixptr);
+  dd_clear_global_constants();
 }
 
 #endif

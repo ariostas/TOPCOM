@@ -15,6 +15,7 @@
 
 #include "CommandlineOptions.hh"
 
+#include "Chirotope.hh"
 #include "Circuits.hh"
 #include "Flip.hh"
 #include "MarkedFlips.hh"
@@ -30,10 +31,12 @@ public:
   // constructors:
   inline TriangFlips();
   inline TriangFlips(const TriangFlips&);
-  inline TriangFlips(const TriangNode&,
+  inline TriangFlips(const Chirotope&,
+		     const TriangNode&,
 		     const SymmetryGroup&,
 		     const bool = false);
-  inline TriangFlips(const TriangNode&, 
+  inline TriangFlips(const Chirotope&,
+		     const TriangNode&, 
 		     const TriangFlips&, 
 		     const TriangNode&, 
 		     const Flip&, 
@@ -43,7 +46,7 @@ public:
   // destructor:
   inline ~TriangFlips();
   // assignment:
-  inline TriangFlips& operator=(const TriangFlips& tn);
+  inline TriangFlips& operator=(const TriangFlips& tf);
   // accessors:
   inline const parameter_type no()        const { return _no; }
   inline const parameter_type rank()      const { return _rank; }
@@ -55,26 +58,32 @@ public:
   void _remove_destroyed_flips(const TriangNode& tn, 
 			       const Flip&,
 			       const SymmetryGroup&);
-  void _add_new_flips         (const TriangNode& tn, 
+  void _add_new_flips         (const Chirotope& chiro,
+			       const TriangNode& tn, 
 			       const SimplicialComplex&,
 			       const SymmetryGroup&,
 			       const SymmetryGroup&, 
 			       const bool = false);
   // stream input/output:
+  inline std::ostream& write  (std::ostream&) const;
+  inline std::istream& read   (std::istream&);
   inline friend std::ostream& operator<<(std::ostream&, const TriangFlips&);
+  inline friend std::istream& operator<<(std::istream&, TriangFlips&);
 };
 
 // constructors:
 inline TriangFlips::TriangFlips() : _no(0), _rank(0), _flips() {}
 inline TriangFlips::TriangFlips(const TriangFlips& tf) :
   _no(tf._no), _rank(tf._rank), _flips(tf._flips) {}
-inline TriangFlips::TriangFlips(const TriangNode& tn, 
+inline TriangFlips::TriangFlips(const Chirotope& chiro,
+				const TriangNode& tn, 
 				const SymmetryGroup& node_symmetries,
 				const bool forbid_vertex_removal) :
   _no(tn.no()), _rank(tn.rank()), _flips() {
-  _add_new_flips(tn, tn, SymmetryGroup(tn.no()), node_symmetries, forbid_vertex_removal);
+  _add_new_flips(chiro, tn, tn, SymmetryGroup(tn.no()), node_symmetries, forbid_vertex_removal);
 }
-inline TriangFlips::TriangFlips(const TriangNode&    tn_before_flip,
+inline TriangFlips::TriangFlips(const Chirotope&     chiro,
+				const TriangNode&    tn_before_flip,
 				const TriangFlips&   tf_before_flip,
 				const TriangNode&    tn_after_flip,
 				const Flip&          flip,
@@ -85,7 +94,8 @@ inline TriangFlips::TriangFlips(const TriangNode&    tn_before_flip,
   _flips(tf_before_flip._flips) {
   _remove_destroyed_flips(tn_before_flip, flip, symmetries);
   _flips.unmark_all();
-  _add_new_flips(tn_after_flip, 
+  _add_new_flips(chiro, 
+		 tn_after_flip, 
 		 flip.second, 
 		 symmetries, 
 		 tn_after_symmetries, 
@@ -114,14 +124,37 @@ inline void TriangFlips::mark_all_flips() {
 }
 
 // stream input/output:
-inline std::ostream& operator<<(std::ostream& ost, const TriangFlips& tf) {
+inline std::ostream& TriangFlips::write(std::ostream& ost) const {
 #ifndef STL_FLIPS
-  ost << '[' << tf._no << ',' << tf._rank << ":\n\t" << tf._flips << ']';
+  ost << '[' << _no << ',' << _rank << ":" << _flips << ']';
 #else
 #endif
   return ost;
 }
 
+inline std::istream& TriangFlips::read(std::istream& ist) {
+#ifndef STL_FLIPS
+  char c;
+
+  ist >> std::ws >> c 
+      >> std::ws >> _no 
+      >> std::ws >> c 
+      >> std::ws >> _rank
+      >> std::ws >> c 
+      >> std::ws >> _flips
+      >> std::ws >> c;
+#else
+#endif
+  return ist;
+}
+
+inline std::ostream& operator<<(std::ostream& ost, const TriangFlips& tf) {
+  return tf.write(ost);
+}
+
+inline std::istream& operator>>(std::istream& ist, TriangFlips& tf) {
+  return tf.read(ist);
+}
 #endif
 
 // eof TriangFlips.hh

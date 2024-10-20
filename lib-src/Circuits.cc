@@ -38,7 +38,7 @@ SimplicialComplex Circuit::lower_facets() const {
   return result;
 }
 
-Circuit::Circuit(const IntegerSet& dependent_set, const Chirotope& chiro) {
+Circuit::Circuit(const Chirotope& chiro, const IntegerSet& dependent_set) {
   assert(dependent_set.card() == chiro.rank() + 1);
   basis_type basis(dependent_set);
   int pm(0);
@@ -79,7 +79,7 @@ Circuits::Circuits(const Chirotope& chiro) :
   Permutation dependent_perm(_no, _rank + 1);
   do {
     IntegerSet dependent_set(dependent_perm);
-    Circuit circuit(dependent_set, chiro);
+    Circuit circuit(chiro, dependent_set);
     if (!circuit.first.is_empty() || !circuit.second.is_empty()) {
       insert(circuit.first + circuit.second, circuit);
       if (CommandlineOptions::verbose() && (++count % 10000 == 0)) {

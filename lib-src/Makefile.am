@@ -4,6 +4,7 @@ libTOPCOM_a_SOURCES = \
 Admissibles.cc \
 CheckTriang.cc \
 Circuits.cc \
+Cocircuits.cc \
 CommandlineOptions.cc \
 CompressedIntegerSet.cc \
 ComputeTriangs.cc \
@@ -41,6 +42,7 @@ Array.hh \
 CheckTriang.hh \
 Chirotope.hh \
 Circuits.hh \
+Cocircuits.hh \
 CommandlineOptions.hh \
 CompressedIntegerSet.hh \
 ComputeTriangs.hh \

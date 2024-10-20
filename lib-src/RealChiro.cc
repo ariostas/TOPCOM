@@ -237,12 +237,25 @@ void RealChiro::_recursive_chiro(const StairCaseMatrix&    current,
     for (parameter_type i = start; i < _no - _rank + step + 1; ++i) {
       StairCaseMatrix next = current;
       next.augment(points[i]);
+      if (CommandlineOptions::debug()) {
+	Matrix raw(current);
+	raw.augment(points[i]);
+ 	std::cerr << "matrix with new column:" << std::endl;
+	raw.pretty_print(std::cerr);
+	std::cerr << std::endl;
+	std::cerr << "new staircase matrix:" << std::endl;
+	next.pretty_print(std::cerr);
+	std::cerr << std::endl;
+      }
       basis_type newbasis(basis);
       newbasis += i;
       if (step + 1 == _rank) {
 #ifdef SUPER_VERBOSE
 	std::cerr << det(next) << ',';
 #endif
+	if (CommandlineOptions::debug()) {
+	  std::cerr << "determinant at leaf: " << det(next) << std::endl;
+	}
 	insert(newbasis, sign(det(next)));
 	if (CommandlineOptions::verbose()) {
 #ifdef MEGA_VERBOSE
@@ -264,6 +277,9 @@ void RealChiro::_recursive_chiro(const StairCaseMatrix&    current,
 #ifdef SUPER_VERBOSE
 	  std::cerr << "premature dependence found in corank " << _rank - step << std::endl;
 #endif
+	  if (CommandlineOptions::debug()) {
+	    std::cerr << "deadend because of dependency." << std::endl;
+	  }
 	  _recursive_chiro(next, points, newbasis, i + 1, step + 1, true);
 	}
       }

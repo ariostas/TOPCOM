@@ -77,6 +77,11 @@ const size_type __no_of_all_triangs(const size_type       no,
 				    const InteriorFacets& intfacets,
 				    const bool            output_triangs) {
   PartialTriang root(no, rank, admtable, intfacets);
+  if (CommandlineOptions::debug()) {
+    std::cerr << "Root triangulation: " << root << std::endl;
+    std::cerr << "Admissibles Table:  " << admtable << std::endl;
+    std::cerr << "InteriorFacets:     " << intfacets << std::endl;
+  }
   size_type count(0);
   size_type partial_count(0);
   size_type no_of_simplices(root.admissibles().card());
@@ -144,9 +149,9 @@ int ComputeTriangs::run(const int flags) {
   if (CommandlineOptions::verbose()) {
     std::cerr << std::endl;
     std::cerr << "------------------------------------------------------------\n";
-    std::cerr << "----------------------     TOPCOM     ----------------------\n";
+    std::cerr << "------------------ " << PACKAGE << " VERSION " << VERSION << " -------------------\n";
     std::cerr << "Triangulations of Point Configurations and Oriented Matroids\n";
-    std::cerr << "--------------------- by  Joerg Rambau ---------------------\n";
+    std::cerr << "--------------------- by Joerg Rambau ----------------------\n";
     std::cerr << "------------------------------------------------------------\n";
     std::cerr << std::endl;
   }
@@ -156,25 +161,49 @@ int ComputeTriangs::run(const int flags) {
   }
 
   if (compute_all) {
+    PointConfiguration points;
     Chirotope chiro;
-    if (chiro.read_string(std::cin)) {
-      if (CommandlineOptions::verbose()) {
-	std::cerr << "read chirotope." << std::endl;
+    if (input_chiro) {
+      if (chiro.read_string(std::cin)) {
+	if (CommandlineOptions::verbose()) {
+	  std::cerr << "read chirotope." << std::endl;
+	}
       }
-    }
-    else {
-      if (CommandlineOptions::verbose()) {
-	std::cerr << "error while reading chirotope." << std::endl;
+      else {
+	if (CommandlineOptions::verbose()) {
+	  std::cerr << "error while reading chirotope." << std::endl;
+	}
+	return 1;
       }
-      return 1;
     }  
-    if (CommandlineOptions::verbose()) {
-      std::cerr << "computing dual chirotope ..." << std::endl;
-    }
-    Chirotope* dualptr = new Chirotope(chiro.dual());
-    if (CommandlineOptions::verbose()) {
-      std::cerr << "... done." << std::endl;
-    }
+    else {
+      if (!points.read(std::cin)) {
+	if (CommandlineOptions::verbose()) {
+	  std::cerr << "error while reading point configuration." << std::endl;
+	}
+	return 1;
+      }
+      if ((points.no() < 2) || (points.rank() < 2)) {
+	if (CommandlineOptions::verbose()) {
+	  std::cerr << "no of points and rank must be at least two." << std::endl;
+	}
+	return 1;
+      }
+      if (points.rank() > points.no()) {
+	if (CommandlineOptions::verbose()) {
+	  std::cerr << "rank must not be larger than no of points." << std::endl;
+	}
+	return 1;
+      }
+      chiro = Chirotope(points, preprocess);
+      }
+//     if (CommandlineOptions::verbose()) {
+//       std::cerr << "computing dual chirotope ..." << std::endl;
+//     }
+//     Chirotope* dualptr = new Chirotope(chiro.dual());
+//     if (CommandlineOptions::verbose()) {
+//       std::cerr << "... done." << std::endl;
+//     }
     size_type no(chiro.no());
     size_type rank(chiro.rank());
     if (CommandlineOptions::verbose()) {
@@ -193,11 +222,11 @@ int ComputeTriangs::run(const int flags) {
     if (CommandlineOptions::verbose()) {
       std::cerr << "computing cocircuits ..." << std::endl;
     }
-    Cocircuits* cocircuitsptr = new Cocircuits(*dualptr);
+    Cocircuits* cocircuitsptr = new Cocircuits(chiro);
     if (CommandlineOptions::verbose()) {
       std::cerr << "... done." << std::endl;
     }
-    delete dualptr;
+//     delete dualptr;
     if (CommandlineOptions::verbose()) {
       std::cerr << "computing facets ..." << std::endl;
     }
@@ -337,8 +366,8 @@ int ComputeTriangs::run(const int flags) {
       if (CommandlineOptions::verbose()) {
 	std::cerr << "count all flips of seed ..." << std::endl;
       }
-      const TriangNode tn(no, rank, seed, chiro);
-      const TriangFlips tf(tn, seed_symmetries, fine_only);
+      const TriangNode tn(no, rank, seed);
+      const TriangFlips tf(chiro, tn, seed_symmetries, fine_only);
       if (CommandlineOptions::verbose()) {
 // 	std::cerr << tf.flips().load() << " flips in total." << std::endl;
 	std::cerr << tf.flips().size() << " flips in total." << std::endl;

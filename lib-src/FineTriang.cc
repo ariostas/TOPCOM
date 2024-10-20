@@ -28,7 +28,7 @@ void FineTriang::_flip_in(IntegerSet& not_used, const size_type i) {
     dependent_set_type dependent_set = *iter1;
     assert (!dependent_set.contains(i));
     dependent_set += i;
-    const Circuit circuit(dependent_set, *_chiroptr);
+    const Circuit circuit(*_chiroptr, dependent_set);
     const SimplicialComplex upper = circuit.upper_facets();
     const SimplicialComplex lower = circuit.lower_facets();
     const IntegerSet usupport = upper.support();

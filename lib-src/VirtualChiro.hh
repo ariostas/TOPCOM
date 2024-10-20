@@ -49,10 +49,19 @@ public:
     _complete  = chiro._complete;
     return *this;
   }
+  // complete chiro:
+  inline void complete() const {
+    if (!_complete) {
+      _chiro = RealChiro(*_pointsptr);
+      _complete = true;
+    }
+  }
   // accessors:
   inline parameter_type no()   const { return _chiro.no(); }
   inline parameter_type rank() const { return _chiro.rank(); };  
   // operators:
+  inline const bool operator==(const VirtualChiro& chiro) const;
+  inline const bool operator!=(const VirtualChiro& chiro) const;
   inline const int operator()(const basis_type& basis) const {
     if (!(_chiro.member(basis))) {
 #ifdef INDEX_CHECK
@@ -110,27 +119,18 @@ public:
   const basis_type find_non_deg_basis() const;
   inline VirtualChiro dual() const {
     VirtualChiro result;
-    if (!_complete) {
-      _chiro = RealChiro(*_pointsptr);
-      _complete = true;
-    }
+    complete();
     result._chiro = _chiro.dual();
     result._complete = true;
     return result;
   };
   // stream output/input:
   inline std::ostream& print_string(std::ostream& ost) const {
-    if (!_complete) {
-      _chiro = RealChiro(*_pointsptr);
-      _complete = true;
-    }
+    complete();
     return _chiro.print_string(ost);
   }
   inline std::ostream& print_dualstring(std::ostream& ost) const {
-    if (!_complete) {
-      _chiro = RealChiro(*_pointsptr);
-      _complete = true;
-    }
+    complete();
     return _chiro.print_dualstring(ost);    
   }
   inline std::istream& read_string(std::istream& ist) {
@@ -139,6 +139,7 @@ public:
   }
   // stream output/input:
   inline friend std::ostream& operator<<(std::ostream& ost, const VirtualChiro& chiro) {
+    chiro.complete();
     return (ost << chiro._chiro);
   }
   inline friend std::istream& operator>>(std::istream& ist, VirtualChiro& chiro) {
@@ -152,11 +153,23 @@ public:
 					   basis_type&               result) const;
 };
 
+inline const bool VirtualChiro::operator==(const VirtualChiro& chiro) const {
+  complete();
+  chiro.complete();
+  return _chiro == chiro._chiro;
+}
+
+inline const bool VirtualChiro::operator!=(const VirtualChiro& chiro) const {
+  return !operator==(chiro);
+}
+
 inline VirtualChiro::VirtualChiro() : 
   _pointsptr(0), _chiro(), _complete(false) {}
+
 inline VirtualChiro::VirtualChiro(const VirtualChiro& chiro) : 
   _pointsptr(chiro._pointsptr), 
   _chiro(chiro._chiro) {}
+
 inline VirtualChiro::VirtualChiro(const PointConfiguration& points,
 				  const bool                immediate) : 
   _pointsptr(&points), 
@@ -165,10 +178,11 @@ inline VirtualChiro::VirtualChiro(const PointConfiguration& points,
   if (immediate) {
     _chiro = RealChiro(points);
   }
-  else {
-    _chiro = RealChiro(points.no(), points.rank());
-  }
+//   else {
+//     _chiro = RealChiro(points.no(), points.rank());
+//   }
 }
+
 inline VirtualChiro::~VirtualChiro() {}
 
 #endif

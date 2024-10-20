@@ -7,6 +7,8 @@
 // 
 ////////////////////////////////////////////////////////////////////////////////
 
+#include <sstream>
+
 #include "SymmetricBFS.hh"
 
 void SymmetricBFS::_mark_equivalent_flips(const TriangNode&                     tnode, 
@@ -248,16 +250,13 @@ void SymmetricBFS::_process_newtriang(const TriangNode&     current_triang,
 				      const TriangFlips&    current_flips,
 				      const TriangNode&     next_triang,
 				      const FlipRep&        current_fliprep) {
-#ifdef SUPER_VERBOSE
-  std::cerr << next_triang << " is new." << std::endl;
-#endif
   const int where(_old_symmetry_class(next_triang));
   if (CommandlineOptions::simple()) {
     if (where != 0) {
       return;
     }
     if (_orbitsize > 0) {
-      if ((*_output_pred_ptr)(next_triang)) {
+      if ((*_output_pred_ptr)(*_pointsptr, *_chiroptr, next_triang)) {
 	++_symcount;
 	_totalcount += _orbitsize;
 	(*_cout_triang_ptr)(_symcount, next_triang);
@@ -279,7 +278,7 @@ void SymmetricBFS::_process_newtriang(const TriangNode&     current_triang,
   else {
     if (where < 0) {
 
-      // mark all equivalent flips in representative:
+      // mark all equivalent flips in next_triang:
       const FlipRep& inversefliprep(current_fliprep.inverse());
       _node_symmetries = SymmetryGroup(_symmetries, next_triang);
       _mark_equivalent_flips(next_triang, _find_iter, inversefliprep);
@@ -298,7 +297,8 @@ void SymmetricBFS::_process_newtriang(const TriangNode&     current_triang,
       // we found at least one new triangulation in orbit satisfying 
       // the search predicate; thus we must save the representative
       _node_symmetries = SymmetryGroup(_symmetries, next_triang);
-      TriangFlips next_flips = TriangFlips(current_triang, 
+      TriangFlips next_flips = TriangFlips(*_chiroptr,
+					   current_triang, 
 					   current_flips, 
 					   next_triang, 
 					   Flip(current_triang, current_fliprep),
@@ -306,7 +306,7 @@ void SymmetricBFS::_process_newtriang(const TriangNode&     current_triang,
 					   _node_symmetries,
 					   _only_fine_triangs);
       _mark_equivalent_flips(next_triang, next_flips, current_fliprep.inverse());
-      if ((*_output_pred_ptr)(next_triang)) {
+      if ((*_output_pred_ptr)(*_pointsptr, *_chiroptr, next_triang)) {
 	++_symcount;
 	_totalcount += _orbitsize;
 	(*_cout_triang_ptr)(_symcount, next_triang);
@@ -334,6 +334,9 @@ void SymmetricBFS::_process_newtriang(const TriangNode&     current_triang,
 	exit(1);
       }
 #endif
+#ifdef SUPER_VERBOSE
+      std::cerr << next_triang << " is new." << std::endl;
+#endif
       _new_triangs[next_triang] = next_flips;
     }
   }
@@ -359,7 +362,7 @@ void SymmetricBFS::_process_flips(const TriangNode&     current_triang,
     }
 #ifdef SUPER_VERBOSE
     std::cerr << "flipping flip " << iter->key() 
-	 << " = " << Flip(current_triang, iter->key()) << std::endl;
+	      << " = " << Flip(current_triang, iter->key()) << std::endl;
 #endif
 #ifndef STL_FLIPS
     const FlipRep current_fliprep(iter->key());
@@ -386,7 +389,7 @@ void SymmetricBFS::_bfs_step() {
     const TriangNode current_triang(iter->first);
 #endif
     if (CommandlineOptions::simple()) {
-      const TriangFlips current_flips(current_triang, _only_fine_triangs);
+      const TriangFlips current_flips(*_chiroptr, current_triang, _symmetries, _only_fine_triangs);
       _process_flips(current_triang, current_flips);
     }
     else {
@@ -437,7 +440,180 @@ void SymmetricBFS::_bfs() {
 #else
     _previous_triangs.swap(_new_triangs);
 #endif
+ 
+    // dump status if requested:
+    if (CommandlineOptions::dump_status()) {
+      if  (this->_processed_count % CommandlineOptions::dump_frequency() == 0) {
+	std::ostringstream filename_str;
+	filename_str << CommandlineOptions::dump_file() << "." << _dump_no % CommandlineOptions::dump_rotations();
+	_dump_str.open(filename_str.str().c_str(), std::ios::out | std::ios::trunc);
+	write(_dump_str);
+	_dump_str.close();
+	++_dump_no;
+	_processed_count = 0;
+      }
+      ++_processed_count;
+    }
   }
+}
+
+// stream input:
+
+std::istream& SymmetricBFS::read(std::istream& ist) {
+  std::string dump_line;
+
+  while ((std::getline(ist, dump_line))) {
+    std::string::size_type lastPos = dump_line.find_first_not_of(" ", 0);
+    std::string::size_type pos     = dump_line.find_first_of(" ", lastPos);
+    std::string keyword            = dump_line.substr(lastPos, pos - lastPos);
+
+    // first, some data is parsed that makes sure that the dumped computational results were
+    // obtained with the "right" data:
+    if (keyword == "_no") {
+      lastPos = dump_line.find_first_not_of(" ", pos);
+      std::string value = dump_line.substr(lastPos, dump_line.length());
+      std::istringstream istrst (value, std::ios::in);
+      parameter_type no_check;
+      
+      if (!(istrst >> no_check)) {
+	std::cerr << "SymmetricBFS::read(std::istream& ist): error while reading _no; exiting" << std::endl;
+	exit(1);
+      }
+      if (_no != no_check) {
+	std::cerr << "SymmetricBFS::read(std::istream& ist): no of points in input differs from no of points in dump file; exiting" << std::endl;
+	exit(1);
+      }
+      if (CommandlineOptions::debug()) {
+	std::cerr << "no of points in input conincides with no of points in dump file: okay" << std::endl;
+      }
+    }
+    if (keyword == "_rank") {
+      lastPos = dump_line.find_first_not_of(" ", pos);
+      std::string value = dump_line.substr(lastPos, dump_line.length());
+      std::istringstream istrst (value, std::ios::in);
+      parameter_type rank_check;
+
+      if (!(istrst >> rank_check)) {
+	std::cerr << "SymmetricBFS::read(std::istream& ist): error while reading _rank; exiting" << std::endl;
+	exit(1);
+      }
+      if (_rank != rank_check) {
+	std::cerr << "SymmetricBFS::read(std::istream& ist): rank of input differs from rank in dump file; exiting" << std::endl;
+	exit(1);
+      }
+      if (CommandlineOptions::debug()) {
+	std::cerr << "rank of input conincides with rank of dump file: okay" << std::endl;
+      }
+    }
+    if (_pointsptr) {
+      if (keyword == "_points") {
+	lastPos = dump_line.find_first_not_of(" ", pos);
+	std::string value = dump_line.substr(lastPos, dump_line.length());
+	std::istringstream istrst (value, std::ios::in);
+	PointConfiguration points_check;
+	
+	if (!(istrst >> points_check)) {
+	  std::cerr << "SymmetricBFS::read(std::istream& ist): error while reading _points; exiting" << std::endl;
+	  exit(1);
+	}
+	if (*_pointsptr!= points_check) {
+	  std::cerr << "SymmetricBFS::read(std::istream& ist): points of input differ from points in dump file; exiting" << std::endl;
+	  exit(1);
+	}
+	if (CommandlineOptions::debug()) {
+	  std::cerr << "points of input conincide with points in dump file: okay" << std::endl;
+	}
+      }
+    }
+    if (_chiroptr) {
+      if (keyword == "_chiro") {
+	lastPos = dump_line.find_first_not_of(" ", pos);
+	std::string value = dump_line.substr(lastPos, dump_line.length());
+	std::istringstream istrst (value, std::ios::in);
+	Chirotope chiro_check;
+	
+	if (!(istrst >> chiro_check)) {
+	  std::cerr << "SymmetricBFS::read(std::istream& ist): error while reading _chiro; exiting" << std::endl;
+	  exit(1);
+	}
+	if ((*_chiroptr) != chiro_check) {
+	  std::cerr << "SymmetricBFS::read(std::istream& ist): chirotope of input differs from chirotope in dump file; exiting" << std::endl;
+	  exit(1);
+	}
+	if (CommandlineOptions::debug()) {
+	  std::cerr << "chirotope of input conincides with chirotope of dump file: okay" << std::endl;
+	}
+      }
+    }
+    if (keyword == "_symmetries") {
+      lastPos = dump_line.find_first_not_of(" ", pos);
+      std::string value = dump_line.substr(lastPos, dump_line.length());
+      std::istringstream istrst (value, std::ios::in);
+      SymmetryGroup symmetries_check(_no);
+      
+      if (!(istrst >> symmetries_check)) {
+	std::cerr << "SymmetricBFS::read(std::istream& ist): error while reading _symmetries; exiting" << std::endl;
+	exit(1);
+      }
+      if (_symmetries != symmetries_check) {
+	std::cerr << "SymmetricBFS::read(std::istream& ist): symmetries of input differ from symmetries in dump file; exiting" << std::endl;
+	exit(1);
+      }
+      if (CommandlineOptions::debug()) {
+	std::cerr << "symmetries of input conincide with _symmetries in dump file: okay" << std::endl;
+      }
+    }
+    // finally, parse the partial computational result from the dump file:
+    if (keyword == "_previous_triangs") {
+      lastPos = dump_line.find_first_not_of(" ", pos);
+      std::string value = dump_line.substr(lastPos, dump_line.length());
+      std::istringstream istrst (value, std::ios::in);
+      if (!(istrst >> _previous_triangs)) {
+	std::cerr << "SymmetricBFS::read(std::istream& ist): error while reading _previous_triangs; exiting" << std::endl;
+	exit(1);
+      }
+      if (CommandlineOptions::debug()) {
+	std::cerr << "_previous_triangs initialized with " << _previous_triangs << std::endl;
+      }
+    }
+    if (keyword == "_new_triangs") {
+      lastPos = dump_line.find_first_not_of(" ", pos);
+      std::string value = dump_line.substr(lastPos, dump_line.length());
+      std::istringstream istrst (value, std::ios::in);
+      if (!(istrst >> _new_triangs)) {
+	std::cerr << "SymmetricBFS::read(std::istream& ist): error while reading _previous_triangs; exiting" << std::endl;
+	exit(1);
+      }
+      if (CommandlineOptions::debug()) {
+	std::cerr << "_new_triangs initialized with " << _new_triangs << std::endl;
+      }
+    }
+    if (keyword == "_totalcount") {
+      lastPos = dump_line.find_first_not_of(" ", pos);
+      std::string value = dump_line.substr(lastPos, dump_line.length());      
+      std::istringstream istrst (value, std::ios::in);      
+      if (!(istrst >> _totalcount)) {
+	std::cerr << "SymmetricBFS::read(std::istream& ist): error while reading _totalcount; exiting" << std::endl;
+	exit(1);
+      }
+      if (CommandlineOptions::debug()) {
+	std::cerr << "_totalcount initialized with " << _totalcount << std::endl;
+      }
+    }
+    if (keyword == "_symcount") {
+      lastPos = dump_line.find_first_not_of(" ", pos);
+      std::string value = dump_line.substr(lastPos, dump_line.length());
+      std::istringstream istrst (value, std::ios::in);
+      if (!(istrst >> _symcount)) {
+	std::cerr << "SymmetricBFS::read(std::istream& ist): error while reading _symcount; exiting" << std::endl;
+	exit(1);
+      }
+      if (CommandlineOptions::debug()) {
+	std::cerr << "_symcount initialized with " << _symcount << std::endl;
+      }
+    }
+  }
+  return ist;
 }
 
 

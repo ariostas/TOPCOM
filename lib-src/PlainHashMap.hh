@@ -81,8 +81,11 @@ public:
   inline const Data&               data()    const { return *_dataptr; }
   inline       Data&               data()          { return *_dataptr; }
   // comparison:
-  inline const bool operator==(const HashMapData<Key, Data>& hmd) { 
+  inline const bool operator==(const HashMapData<Key, Data>& hmd) const { 
     return (key() == hmd.key()) && (data() == hmd.data()); 
+  }
+  inline const bool operator!=(const HashMapData<Key, Data>& hmd) const { 
+    return !((key() == hmd.key()) && (data() == hmd.data())); 
   }
   // iostream:
   inline std::ostream& write(std::ostream& ost) const {

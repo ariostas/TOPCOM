@@ -69,6 +69,8 @@ public:
   RealChiro dual() const;
   // operators:
   inline const int operator()(const basis_type&) const;
+  inline const bool operator==(const RealChiro&) const;
+  inline const bool operator!=(const RealChiro&) const;
   // stream output/input:
   std::ostream& print_string(std::ostream&) const;
   std::ostream& print_dualstring(std::ostream&) const;
@@ -124,6 +126,14 @@ inline const int RealChiro::operator()(const basis_type& basis) const {
   }
 #endif
   return *member(basis);
+}
+
+inline const bool RealChiro::operator==(const RealChiro& chiro) const {
+  return chirotope_data::operator==(chiro);
+}
+
+inline const bool RealChiro::operator!=(const RealChiro& chiro) const {
+  return !operator==(chiro);
 }
 
 // stream output/input:

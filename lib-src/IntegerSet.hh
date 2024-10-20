@@ -195,9 +195,9 @@ public:
   __is_const_iterator(const IntegerSet& s);
   inline __is_const_iterator(const IntegerSet& s, int);
 private:
-  inline __is_const_iterator::__is_const_iterator(const IntegerSet& s, 
-						  const size_type current_block,
-						  const size_type current_bit);
+  inline __is_const_iterator(const IntegerSet& s, 
+			     const size_type current_block,
+			     const size_type current_bit);
 public:
   inline __is_const_iterator& operator=(const __is_const_iterator& iter);
   inline const bool           valid() const;

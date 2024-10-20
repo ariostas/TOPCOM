@@ -15,9 +15,10 @@
 
 // class FlipRep:
 // constructors:
-FlipRep::FlipRep(const dependent_set_type& ds, const TriangNode& tn) :
+FlipRep::FlipRep(const Chirotope& chiro, const dependent_set_type& ds, const TriangNode& tn) :
   fliprep_type() {
-  const Circuit circuit(ds, *tn.chiroptr());
+
+  const Circuit circuit(chiro, ds);
 
   const Simplex c_support(circuit.support());
   if (c_support.card() == tn.rank() + 1) {
@@ -98,8 +99,8 @@ void Flip::_construct(const TriangNode& tn, const Circuit& circuit) {
   }
 }
 
-void Flip::_construct(const TriangNode& tn, const dependent_set_type& ds) {
-  const Circuit circuit(ds, *tn.chiroptr());
+void Flip::_construct(const Chirotope& chiro, const TriangNode& tn, const dependent_set_type& ds) {
+  const Circuit circuit(chiro, ds);
   _construct(tn, circuit);
 }
 

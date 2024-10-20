@@ -33,7 +33,8 @@ void TriangFlips::_remove_destroyed_flips(const TriangNode& tn,
   }
 }
 
-void TriangFlips::_add_new_flips(const TriangNode&        tn,
+void TriangFlips::_add_new_flips(const Chirotope&         chiro,
+				 const TriangNode&        tn,
 				 const SimplicialComplex& restriction,
 				 const SymmetryGroup&     symmetries,
 				 const SymmetryGroup&     tn_symmetries,
@@ -101,7 +102,7 @@ void TriangFlips::_add_new_flips(const TriangNode&        tn,
 	continue;
       }
       // try to build a flip from dependent_set:
-      const FlipRep fliprep(dependent_set, tn);
+      const FlipRep fliprep(chiro, dependent_set, tn);
       if (fliprep) {
 	// succeeded:
 	if (forbid_vertex_removal && fliprep.kills_vertex()) {
@@ -157,7 +158,7 @@ void TriangFlips::_add_new_flips(const TriangNode&        tn,
 	continue;
       }
       // try to build a flip from dependent_set:
-      const FlipRep fliprep(dependent_set, tn);
+      const FlipRep fliprep(chiro, dependent_set, tn);
       if (fliprep) {
 	// succeeded:
 	if (forbid_vertex_removal && fliprep.kills_vertex()) {

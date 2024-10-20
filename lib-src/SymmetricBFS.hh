@@ -6,6 +6,9 @@
 #ifndef SYMMETRICBFS_HH
 #define SYMMETRICBFS_HH
 
+#include <fstream>
+#include <string>
+
 #include <assert.h>
 #include <set>
 #include <map>
@@ -63,15 +66,29 @@ public:
 
 class __sbfs_output_pred_base {
 public:
-  inline virtual bool operator()(const TriangNode& tn) const {
+  inline virtual bool operator()(const PointConfiguration& points,
+				 const Chirotope&          chiro,
+				 const TriangNode&         tn) const {
     return true;
   }
 };
 
 class __sbfs_output_checkno : public __sbfs_output_pred_base {
 public:
-  inline virtual bool operator()(const TriangNode& tn) const {
+  inline virtual bool operator()(const PointConfiguration& points,
+				 const Chirotope&          chiro,
+				 const TriangNode&         tn) const {
     return (tn.card() == CommandlineOptions::no_of_simplices());
+  }
+};
+
+class __sbfs_output_checknonregularity : public __sbfs_output_pred_base {
+public:
+  inline virtual bool operator()(const PointConfiguration& points,
+				 const Chirotope&          chiro,
+				 const TriangNode&         tn) const {
+    assert (points.no() == chiro.no());
+    return !RegularityCheck(points, chiro, tn).is_regular();
   }
 };
 
@@ -168,7 +185,7 @@ private:
 public:
 
   // constructor:
-  inline __sbfs_search_min_no_of_verts::__sbfs_search_min_no_of_verts(const size_type min_no_of_verts) :
+  inline __sbfs_search_min_no_of_verts(const size_type min_no_of_verts) :
     _min_no_of_verts(min_no_of_verts) {}
 
   // function:
@@ -206,6 +223,7 @@ private:
   typedef __sbfs_cout_triang                  cout_triang_type;
   typedef __sbfs_output_pred_base             output_pred_base_type;
   typedef __sbfs_output_checkno               output_checkno_type;
+  typedef __sbfs_output_checknonregularity    output_checknonregularity_type;
   typedef __sbfs_search_pred_base             search_pred_base_type;
   typedef __sbfs_search_checkreg              search_checkreg_type;
   typedef __sbfs_search_sometimes             search_checksometimes_type;
@@ -237,7 +255,12 @@ private:
   output_pred_base_type*          _output_pred_ptr;
   search_pred_base_type*          _search_pred_ptr;
   bool                            _only_fine_triangs;
+  bool                            _print_triangs;
   bool                            _only_unimodular_triangs;
+private:
+  size_type                       _processed_count;
+  int                             _dump_no;
+  std::fstream                    _dump_str;
 private:
   SymmetricBFS();
   SymmetricBFS(const SymmetricBFS&);
@@ -273,6 +296,12 @@ public:
   void _process_flips(const TriangNode&, const TriangFlips&);
   void _bfs_step();
   void _bfs();
+  // stream output/input:
+  std::istream& read(std::istream&);
+  inline std::ostream& write(std::ostream&) const;
+  friend inline std::istream& operator>>(std::istream& ist, SymmetricBFS& sbfs);
+  friend inline std::ostream& operator<<(std::ostream& ost, const SymmetricBFS& sbfs);
+
 };
 
 inline SymmetricBFS::SymmetricBFS(const parameter_type      no, 
@@ -289,12 +318,15 @@ inline SymmetricBFS::SymmetricBFS(const parameter_type      no,
   _previous_triangs(), _new_triangs(),
   _find_iter(_previous_triangs.begin()),
   _totalcount(0), _symcount(0),
-  _representative(no, rank, seed, chiro), _transformation(_no),
+  _representative(no, rank, seed), _transformation(_no),
   _orbitsize(0), _orbit(),
   _rep_has_search_pred(false),
-  _only_fine_triangs(only_fine_triangs) {
+  _print_triangs(print_triangs),
+  _only_fine_triangs(only_fine_triangs),
+  _processed_count(0L), _dump_no(0) {
+  
   IntegerSet seed_support(seed.support());
-  if (print_triangs) {
+  if (_print_triangs) {
     _cout_triang_ptr = new cout_triang_type();
   }
   else {
@@ -302,6 +334,9 @@ inline SymmetricBFS::SymmetricBFS(const parameter_type      no,
   }
   if (CommandlineOptions::no_of_simplices() > 0) {
     _output_pred_ptr = new output_checkno_type();
+  }
+  else if (CommandlineOptions::check_nonregular()) {
+    _output_pred_ptr = new output_checknonregularity_type();
   }
   else {
     _output_pred_ptr = new output_pred_base_type();
@@ -324,32 +359,48 @@ inline SymmetricBFS::SymmetricBFS(const parameter_type      no,
   else {
     _search_pred_ptr = new search_pred_base_type();
   }
-  const TriangNode current_triang = TriangNode(no, rank, seed, *_chiroptr);
-  if (CommandlineOptions::simple()) {
-    const TriangFlips current_flips;
-    _old_symmetry_class(current_triang);
-    if (_orbitsize > 0) {
-      if ((*_output_pred_ptr)(current_triang)) {
-	_totalcount += _orbitsize;
-	++_symcount;
-	(*_cout_triang_ptr)(_symcount, current_triang);
-      }
-      _all_triangs.insert(current_triang);
-      _previous_triangs[current_triang] = current_flips;
+  if (CommandlineOptions::read_status()) {
+    std::ifstream read_str(CommandlineOptions::read_file());
+    
+    read(read_str);
+
+    std::cerr << "SymmetricBFS initialized from file " << CommandlineOptions::read_file() << std::endl;
+    if (CommandlineOptions::debug()) {
+      std::cerr << "data:" 
+	      << std::endl
+	      << *this
+	      << std::endl;
     }
   }
   else {
-    _old_symmetry_class(current_triang);
-    if (_orbitsize > 0) {
-      if ((*_output_pred_ptr)(current_triang)) {
-	_totalcount += _orbitsize;
-	++_symcount;
-	(*_cout_triang_ptr)(_symcount, current_triang);
+    const TriangNode current_triang = TriangNode(no, rank, seed);
+    if (CommandlineOptions::simple()) {
+      const TriangFlips current_flips;
+      _old_symmetry_class(current_triang);
+      if (_orbitsize > 0) {
+	if ((*_output_pred_ptr)(points, chiro, current_triang)) {
+	  _totalcount += _orbitsize;
+	  ++_symcount;
+	  (*_cout_triang_ptr)(_symcount, current_triang);
+	}
+	_all_triangs.insert(current_triang);
+	_previous_triangs[current_triang] = current_flips;
       }
-      const TriangFlips current_flips = TriangFlips(current_triang, 
-						    _node_symmetries,
-						    _only_fine_triangs);
-      _previous_triangs[current_triang] = current_flips;
+    }
+    else {
+      _old_symmetry_class(current_triang);
+      if (_orbitsize > 0) {
+	if ((*_output_pred_ptr)(points, chiro, current_triang)) {
+	  _totalcount += _orbitsize;
+	  ++_symcount;
+	  (*_cout_triang_ptr)(_symcount, current_triang);
+	}
+	const TriangFlips current_flips = TriangFlips(*_chiroptr,
+						      current_triang, 
+						      _node_symmetries,
+						      _only_fine_triangs);
+	_previous_triangs[current_triang] = current_flips;
+      }
     }
   }
   _bfs();
@@ -359,6 +410,38 @@ inline SymmetricBFS::~SymmetricBFS() {
   delete _cout_triang_ptr;
   delete _output_pred_ptr;
   delete _search_pred_ptr;
+}
+
+// stream output/input:
+
+inline std::ostream& SymmetricBFS::write(std::ostream& ost) const {
+  ost << "TOPCOM SymmetricBFS dump start:" << std::endl;
+  ost << "_dump_no             " << _dump_no << std::endl;
+  ost << "_no                  " << _no << std::endl;
+  ost << "_rank                " << _rank << std::endl;
+  if (_pointsptr) {
+    ost << "_points              " << *_pointsptr << std::endl;
+  }
+  if (_chiroptr) {
+    ost << "_chiro               " << *_chiroptr << std::endl;
+  }
+  ost << "_symmetries          " << _symmetries << std::endl;
+  ost << "_print_triangs       " << _print_triangs << std::endl;
+  ost << "_only_fine_triangs   " << _only_fine_triangs << std::endl;
+  ost << "_previous_triangs    " << _previous_triangs << std::endl;
+  ost << "_new_triangs         " << _new_triangs << std::endl;
+  ost << "_totalcount          " << _totalcount << std::endl;
+  ost << "_symcount            " << _symcount << std::endl;
+  ost << "SymmetricBFS dump end." << std::endl;
+  return ost;
+}
+
+inline std::istream& operator>>(std::istream& ist, SymmetricBFS& sbfs) {
+  return sbfs.read(ist);
+}
+
+inline std::ostream& operator<<(std::ostream& ost, const SymmetricBFS& sbfs) {
+  return sbfs.write(ost);
 }
 
 #endif
