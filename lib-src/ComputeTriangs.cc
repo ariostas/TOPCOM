@@ -150,6 +150,11 @@ int ComputeTriangs::run(const int flags) {
     std::cerr << "------------------------------------------------------------\n";
     std::cerr << std::endl;
   }
+  if (input_chiro && CommandlineOptions::check_regular()) {
+    std::cerr << "regularity check not possible if only chirotope is given; exiting." << std::endl;
+    exit(1);
+  }
+
   if (compute_all) {
     Chirotope chiro;
     if (chiro.read_string(std::cin)) {

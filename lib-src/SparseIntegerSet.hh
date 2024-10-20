@@ -18,16 +18,6 @@
 
 typedef size_type integer_key;
 
-class HashKeySize<integer_key> {
-public:
-  size_type operator()(const integer_key& key) { return 1; }
-};
-
-class HashKey<integer_key> {
-public:
-  size_type operator()(const integer_key& key, const size_type n) { return key; }
-};
-
 typedef HashSet<integer_key>  set_data;
 
 class IntegerSet;

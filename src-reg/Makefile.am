@@ -4,13 +4,13 @@ checkregularity_SOURCES = checkregularity.cc
 
 LDADD           = ../lib-src-reg/libCHECKREG.a \
                   ../lib-src/libTOPCOM.a \
-                  ../wrap-gmp-gcc3/libwrapgmp-gcc3.a \
+                  ../wrap-gmp-gcc4/libwrapgmp-gcc4.a \
                   ../external/lib/libcddgmp.a \
                   ../external/lib/libgmp.a
 
 INCLUDES        = -I../lib-src
 INCLUDES       += -I../lib-src-reg
-INCLUDES       += -I../wrap-gmp-gcc3 
+INCLUDES       += -I../wrap-gmp-gcc4
 INCLUDES       += -I../external/include
 INCLUDES       += -I$(includedir)
 

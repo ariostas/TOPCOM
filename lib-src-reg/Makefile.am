@@ -11,7 +11,7 @@ RegularityCheck.hh \
 LPinterface.hh
 
 INCLUDES        = -I../lib-src 
-INCLUDES       += -I../wrap-gmp-gcc3 
+INCLUDES       += -I../wrap-gmp-gcc4
 INCLUDES       += -I../external/include
 INCLUDES       += -I$(includedir)
 

@@ -2,7 +2,7 @@ dnl Process this file with autoconf to produce a configure script.
 AC_INIT()
 
 dnl Init automake.
-AM_INIT_AUTOMAKE(TOPCOM, 0.13.2)
+AM_INIT_AUTOMAKE(TOPCOM, 0.14.0)
 
 dnl Checks for programs.
 AC_PROG_CC
@@ -32,4 +32,4 @@ AC_C_CONST
 
 dnl Checks for library functions.
 
-AC_OUTPUT(wrap-gmp-gcc3/Makefile lib-src/Makefile lib-src-reg/Makefile src/Makefile src-reg/Makefile Makefile)
+AC_OUTPUT(wrap-gmp-gcc4/Makefile lib-src/Makefile lib-src-reg/Makefile src/Makefile src-reg/Makefile Makefile)

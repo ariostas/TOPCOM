@@ -1,3 +1,8 @@
+version 0.14.0: first version that compiles on gcc4
+	chiro2* returns an error now if --regular is given as an option (regularity not defined without coordinates)
+version 0.13.3: corrections in template specializations
+	new generator for hypersimplices
+	new examples
 version 0.13.2: corrections in the usage message
 	automake 1.7 adaptions
 	corrected a bug that made the computation of the closure

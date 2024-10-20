@@ -58,7 +58,7 @@ __sc_const_iterator<T> __sc_const_iterator<T>::operator=(const __sc_const_iterat
   }
   if (iter._current_indexset_iter) {
     _current_indexset_iter = iter_allocator.allocate(1);
-    std::construct(_current_indexset_iter, *iter._current_indexset_iter);
+    std::_Construct(_current_indexset_iter, *iter._current_indexset_iter);
   }
   else {
     _current_card = _container->_maxcard;
@@ -312,7 +312,7 @@ const bool SimplicialComplexTemplate<T>::contains_free_face(const Simplex& simp,
 template<class T>
 const Simplex SimplicialComplexTemplate<T>::support() const {
   Simplex result = Simplex();
-  for (SimplicialComplexTemplate<T>::iterator iter = begin(); iter != end(); ++iter) {
+  for (typename SimplicialComplexTemplate<T>::iterator iter = begin(); iter != end(); ++iter) {
     result += *iter;
   }
   return result;
@@ -798,7 +798,7 @@ SimplicialComplexTemplate<T> SimplicialComplexTemplate<T>::join(const Simplex& s
   }
   SimplicialComplexTemplate<T> result;
   for (size_type i = _mincard; i < _maxcard; ++i) {
-    for (SimplicialComplexTemplate<T>::IndexSet_const_iterator iter = 
+    for (typename SimplicialComplexTemplate<T>::IndexSet_const_iterator iter = 
 	   _index_set[i].begin();
 	 iter != _index_set[i].end();
 	 ++iter) {
@@ -829,13 +829,13 @@ SimplicialComplexTemplate<T> SimplicialComplexTemplate<T>::join(const Simplicial
     return *this;
   }
   for (size_type i = _maxcard; i > _mincard; --i) {
-    for (SimplicialComplexTemplate<T>::IndexSet_const_iterator iter1 = 
+    for (typename SimplicialComplexTemplate<T>::IndexSet_const_iterator iter1 = 
 	   _index_set[i - 1].begin();
 	 iter1 != _index_set[i - 1].end();
 	 ++iter1) {
       const Simplex& simp1 = _index_table[i - 1].get_obj(*iter1);
       for (size_type j = s._maxcard; j > s._mincard; --j) {
-	for (SimplicialComplexTemplate<T>::IndexSet_const_iterator iter2 = s._index_set[j - 1].begin();
+	for (typename SimplicialComplexTemplate<T>::IndexSet_const_iterator iter2 = s._index_set[j - 1].begin();
 	     iter2 != s._index_set[j - 1].end();
 	     ++iter2) {
 	  const Simplex& simp2 = s._index_table[j - 1].get_obj(*iter2);
@@ -862,7 +862,7 @@ std::ostream& SimplicialComplexTemplate<T>::write(std::ostream& ost) const {
   const size_type card = this->card();
   
   ost << "{";
-  for (SimplicialComplexTemplate<T>::const_iterator iter = begin();
+  for (typename SimplicialComplexTemplate<T>::const_iterator iter = begin();
        iter != end(); 
        ++iter) {
     ost << *iter;			// we need the stream output for Simplex

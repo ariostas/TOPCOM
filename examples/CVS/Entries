@@ -1,4 +1,6 @@
 /.cvsignore/1.5/Thu Jul  4 17:57:01 2002//
+/6-gonxI.dat/1.2/Tue Aug 12 00:57:56 2003//
+/6-gonxI.result/1.1/Thu Nov 27 15:50:14 2003//
 /6gon_doublecover.dat/1.1/Sun Dec 16 17:09:08 2001//
 /A_6.dat/1.1/Sat Jan 25 15:00:07 2003//
 /A_6_heights.res/1.1/Sat Jan 25 15:00:07 2003//
@@ -16,8 +18,11 @@
 /D4xD2_reg.result/1.1/Mon May 26 18:22:58 2003//
 /D4xD3.dat/1.2/Fri May 23 08:45:08 2003//
 /D5xD2.dat/1.1/Mon May 26 18:22:58 2003//
+/D5xD2.result.gz/1.1/Thu Nov 27 15:50:14 2003//
+/D5xD2_reg.result.gz/1.1/Thu Nov 27 15:50:13 2003//
 /D6xD2.dat/1.1/Tue May 27 13:46:13 2003//
-/DkxDl.results/1.1/Mon May 26 08:30:35 2003//
+/D6xD2.result.gz/1.1/Thu Nov 27 15:50:05 2003//
+/DkxDl.results/1.2/Thu Aug 21 18:55:25 2003//
 /P10.dat/1.1/Wed Aug 30 16:06:38 2000//
 /SantosTriang_Factor1.poly/1.1/Fri Nov  3 10:33:06 2000//
 /SantosTriang_Factor1_ManualSchlegel.poly/1.1/Fri Nov 10 10:55:05 2000//
@@ -57,6 +62,16 @@
 /cyclic_13_7.result/1.2/Thu Feb  7 18:12:25 2002//
 /cyclic_4_2.dat/1.1/Sat Jan 25 10:59:49 2003//
 /cyclic_checkreg.dat/1.1/Fri May 23 08:45:08 2003//
+/hypersimplex_2_3.dat/1.1/Thu Nov 27 15:50:05 2003//
+/hypersimplex_2_3.results/1.1/Thu Nov 27 15:50:05 2003//
+/hypersimplex_2_4.dat/1.1/Thu Nov 27 15:50:05 2003//
+/hypersimplex_2_4.results/1.1/Thu Nov 27 15:50:05 2003//
+/hypersimplex_2_5.dat/1.1/Thu Nov 27 15:50:05 2003//
+/hypersimplex_2_5.results/1.1/Thu Nov 27 15:50:05 2003//
+/hypersimplex_2_6.dat/1.1/Thu Nov 27 15:50:05 2003//
+/hypersimplex_2_6.results/1.1/Thu Nov 27 15:50:05 2003//
+/hypersimplex_2_7.dat/1.1/Thu Nov 27 15:50:05 2003//
+/hypersimplex_2_7_interrupted.results/1.1/Fri Nov 28 14:15:47 2003//
 /interiortetra.dat/1.1.1.1/Thu Dec  9 16:58:11 1999//
 /lattice_3_3.dat/1.1.1.1/Thu Dec  9 16:58:11 1999//
 /lattice_4_4.dat/1.1.1.1/Thu Dec  9 16:58:11 1999//
@@ -82,5 +97,4 @@
 /stackedtetra.dat/1.1.1.1/Thu Dec  9 16:58:11 1999//
 /transportation-small.dat/1.1/Tue Oct 23 08:48:24 2001//
 /transportation-small.poly/1.1/Tue Oct 23 08:48:24 2001//
-/6-gonxI.dat/1.2/Tue Aug 12 00:45:08 2003//
 D

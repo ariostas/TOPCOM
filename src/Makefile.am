@@ -16,6 +16,7 @@ cocircuits2facets \
 cross \
 cube \
 cyclic \
+hypersimplex \
 lattice \
 points2chiro \
 points2finetriang \
@@ -47,6 +48,7 @@ cocircuits2facets_SOURCES          = cocircuits2facets.cc
 cross_SOURCES                      = cross.cc
 cube_SOURCES                       = cube.cc
 cyclic_SOURCES                     = cyclic.cc
+hypersimplex_SOURCES               = hypersimplex.cc
 lattice_SOURCES	                   = lattice.cc
 points2chiro_SOURCES               = points2chiro.cc
 points2finetriang_SOURCES          = points2finetriang.cc
@@ -63,13 +65,13 @@ santos_22_triang_SOURCES           = santos_22_triang.cc
 
 LDADD           = ../lib-src/libTOPCOM.a \
                   ../lib-src-reg/libCHECKREG.a \
-                  ../wrap-gmp-gcc3/libwrapgmp-gcc3.a \
+                  ../wrap-gmp-gcc4/libwrapgmp-gcc4.a \
                   ../external/lib/libcddgmp.a \
                   ../external/lib/libgmp.a
 
 INCLUDES        = -I../lib-src
 INCLUDES       += -I../lib-src-reg
-INCLUDES       += -I../wrap-gmp-gcc3 
+INCLUDES       += -I../wrap-gmp-gcc4
 INCLUDES       += -I../external/include
 INCLUDES       += -I$(includedir)
 

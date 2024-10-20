@@ -142,16 +142,20 @@ inline unsigned long Array<T>::key(const unsigned long n) const {
   return _data->key(n);
 }
 // specialization for int:
+template <>
 inline unsigned long Array<int>::keysize() const {
   return maxindex();
 }
+template <>
 inline unsigned long Array<int>::key(const unsigned long n) const {
   return (*this)[n];
 }
 // specialization for size_type:
+template <>
 inline unsigned long Array<size_type>::keysize() const {
   return maxindex();
 }
+template <>
 inline unsigned long Array<size_type>::key(const unsigned long n) const {
   return (*this)[n];
 }

@@ -20,6 +20,8 @@
 
 typedef Array<block> compressed_type;
 
+class __cis_const_iterator; // same as for IntegerSet
+
 class CompressedIntegerSet {
 private:
   IntegerSet               _non_zero; // contains positions of non-zero blocks

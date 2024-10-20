@@ -18,6 +18,7 @@
 
 #include "Global.hh"
 #include "RefCount.hh"
+#include "HashKey.hh"
 
 template <class T>
 class PlainArray;
@@ -41,6 +42,9 @@ private:
   typedef SmartPtr<data_type> dataptr_type;
 private:
   std::allocator<dataptr_type> dataptr_allocator;
+private:
+  static HashKeySize<data_type> _hashkeysize;
+  static HashKey<data_type>     _hashkey;
 private:
   static const char start_char;
   static const char end_char;
@@ -205,7 +209,7 @@ template <class T>
 inline unsigned long PlainArray<T>::keysize() const {
   unsigned long res = 0;
   for (unsigned long i = 0; i < maxindex(); ++i) {
-    res += (*this)[i].keysize();
+    res += _hashkeysize((*this)[i]);
   }
   return res;
 }
@@ -214,11 +218,11 @@ inline unsigned long PlainArray<T>::key(const unsigned long n) const {
   unsigned long block_no = n + 1;
   unsigned long i = 0;
   while ((block_no > 0) && (i < maxindex())) {
-    if (block_no > (*this)[i].keysize()) {
-      block_no -= (*this)[i++].keysize();
+    if (block_no > _hashkeysize((*this)[i])) {
+      block_no -= _hashkeysize((*this)[i++]);
     }
     else {
-      return (*this)[i].key(block_no - 1);
+      return _hashkey((*this)[i], block_no - 1);
     }
   }
 #ifdef DEBUG
@@ -229,16 +233,20 @@ inline unsigned long PlainArray<T>::key(const unsigned long n) const {
   return 0;
 }
 // specialization for int:
+template <>
 inline unsigned long PlainArray<int>::keysize() const {
   return maxindex();
 }
+template <>
 inline unsigned long PlainArray<int>::key(const unsigned long n) const {
   return (*this)[n];
 }
 // specialization for size_type:
+template <>
 inline unsigned long PlainArray<size_type>::keysize() const {
   return maxindex();
 }
+template <>
 inline unsigned long PlainArray<size_type>::key(const unsigned long n) const {
   return (*this)[n];
 }
@@ -417,6 +425,15 @@ const char PlainArray<T>::delim_char = ',';
 
 template<class T>
 T PlainArray<T>::default_obj;
+
+
+// Hash Objects:
+
+template <class T>
+HashKeySize<typename PlainArray<T>::data_type> PlainArray<T>::_hashkeysize;
+
+template <class T>
+HashKey<typename PlainArray<T>::data_type>     PlainArray<T>::_hashkey;
 
 #endif
 

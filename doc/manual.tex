@@ -1,12 +1,10 @@
 \documentclass[12pt,a4paper]{article}
 
-\usepackage{a4}
-\usepackage{palatino}
-\usepackage[T1]{fontenc}
+\usepackage{geometry}
 
 \title{TOPCOM User Manual}
 \author{J\"org Rambau\\
-  rambau@zib.de}
+  joerg.rambau@uni-bayreuth.de}
 
 
 
@@ -45,10 +43,10 @@ specified as follows.
 
 You may specify generators of the combinatorial symmetry of a point
 configuration as permutations of the vertex numbers. The symmetry of the square
-reads as follows:
+reads as follows (observe that the count starts at 0!):
 
 \begin{verbatim}
-  [[1,3,2,4],[3,4,1,2]]
+    [[3,2,1,0],[2,3,0,1],[0,2,1,3]]
 \end{verbatim}
 
 \section{Commands}
@@ -92,6 +90,8 @@ The following commands are provided:
 \item[\texttt{cyclic n d}] Computes the vertices and symmetry generators of
   the cyclic $d$-polytope with $n$ vertices.
 \item[\texttt{cross d}] Computes the vertices of the $d$-dimensional cross-polytope.
+\item[\texttt{hypersimplex k d}] Computes the vertices and symmetry generators of 
+  the $k$-th hypersimplex in dimension~$d$.
 \item[\texttt{santos\_triang}] Computes the point configuration, the symmetry,
   and the Santos triangulation (without flips).
 \end{description}

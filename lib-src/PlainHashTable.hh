@@ -23,6 +23,19 @@
 #define _RAND_SEED 19345
 #endif
 
+// the following prime list is taken from STL:
+const size_type __pht_no_of_primes = 33;
+
+const size_type __pht_prime[__pht_no_of_primes] = {
+  0UL,          3UL,          7UL,         13UL,        27UL,
+  53UL,         97UL,         193UL,       389UL,       769UL,
+  1543UL,       3079UL,       6151UL,      12289UL,     24593UL,
+  49157UL,      98317UL,      196613UL,    393241UL,    786433UL,
+  1572869UL,    3145739UL,    6291469UL,   12582917UL,  25165843UL,
+  50331653UL,   100663319UL,  201326611UL, 402653189UL, 805306457UL, 
+  1610612741UL, 3221225473UL, 4294967291UL
+};
+
 template<class HashData>
 class __pht_entry {
 public:
@@ -532,8 +545,10 @@ bool PlainHashTable<HashData>::operator==(const PlainHashTable<HashData>& ht) co
   if (load() != ht.load()) {
     return false;
   }
-  for (PlainHashTable<HashData>::const_iterator iter = begin(); iter != end(); ++iter) {
-    const PlainHashTable<HashData>::const_iterator finder(ht.find(iter->key()));
+  for (typename PlainHashTable<HashData>::const_iterator iter = this->begin(); 
+       iter != this->end(); 
+       ++iter) {
+    const typename PlainHashTable<HashData>::const_iterator finder(ht.find(iter->key()));
     if (finder != ht.end()) {
       if (finder->data() != iter->data()) {
 	return false;
@@ -819,7 +834,7 @@ std::ostream& PlainHashTable<HashData>::write(std::ostream& ost) const {
   size_type count = 0;
 
   ost << "[";
-  for (PlainHashTable<HashData>::const_iterator iter = begin(); iter != end(); ++iter) {
+  for (typename PlainHashTable<HashData>::const_iterator iter = this->begin(); iter != this->end(); ++iter) {
     ost << *iter;
     count++;
     if (count < _load)
@@ -1150,19 +1165,6 @@ HashKey<typename HashData::key_type>     PlainHashTable<HashData>::_hashkey;
 template<class HashData>
 size_type PlainHashTable<HashData>::_maxchainlen = 0;
 #endif
-
-// the following prime list is taken from STL:
-const size_type __pht_no_of_primes = 33;
-
-const size_type __pht_prime[__pht_no_of_primes] = {
-  0UL,          3UL,          7UL,         13UL,        27UL,
-  53UL,         97UL,         193UL,       389UL,       769UL,
-  1543UL,       3079UL,       6151UL,      12289UL,     24593UL,
-  49157UL,      98317UL,      196613UL,    393241UL,    786433UL,
-  1572869UL,    3145739UL,    6291469UL,   12582917UL,  25165843UL,
-  50331653UL,   100663319UL,  201326611UL, 402653189UL, 805306457UL, 
-  1610612741UL, 3221225473UL, 4294967291UL
-};
 
 template <class HashData>
 typename PlainHashTable<HashData>::entry* PlainHashTable<HashData>::_bufptr = 0;

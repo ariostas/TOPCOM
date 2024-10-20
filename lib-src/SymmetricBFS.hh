@@ -89,7 +89,8 @@ public:
   inline virtual bool operator()(const PointConfiguration& points,
 				 const Chirotope&          chiro,
 				 const TriangNode&         tn) const {
-    return RegularityCheck(points, chiro, tn).is_regular();    
+    assert (points.no() == chiro.no());
+    return RegularityCheck(points, chiro, tn).is_regular();
   }
 };
 
@@ -115,6 +116,7 @@ public:
   inline virtual bool operator()(const PointConfiguration& points,
 				 const Chirotope&          chiro,
 				 const TriangNode&         tn) const {
+    assert (points.no() == chiro.no());
     return ((tn.support() == _seed_support) && (RegularityCheck(points, chiro, tn).is_regular()));
   }
 };
