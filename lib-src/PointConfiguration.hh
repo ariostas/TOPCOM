@@ -85,6 +85,7 @@ public:
   PointConfiguration& pyramid    ();
   PointConfiguration& direct_sum (const PointConfiguration&);
   PointConfiguration& homogenize ();
+  PointConfiguration& transform_to_full_rank();
   // constructions out of place:
   PointConfiguration  product    (const PointConfiguration&) const;
   // operations in place:

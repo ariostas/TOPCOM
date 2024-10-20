@@ -78,25 +78,25 @@ bool LPinterface::has_interior_point() {
   if (dd_Positive(_solptr->optvalue)){
     if (CommandlineOptions::output_heights()) {
       std::cout << "(";
-      Field maxheight(ZERO);
+      Field maxheight(ONE);
       for (dd_rowrange j = 0; j < (_solptr->d) - 2; j++) {
 	const Field x_j = Field(_solptr->sol[j+1]);
-	if (maxheight < x_j) {
-	  maxheight = x_j;
+	if (maxheight - 1 < x_j) {
+	  maxheight = x_j + 1;
 	}
       }
       for (dd_rowrange j = 0; j < (_solptr->d) - 3; j++) {
 	const Field x_j = Field(_solptr->sol[j+1]);
 	if (_support.contains(j)) {
 	  //	  std::cout << double(x_j);
-	  std::cout << x_j.get_d();
+	  std::cout << x_j.get_str();
 	}
 	else {
 	  if (CommandlineOptions::debug()) {
 	    std::cerr << "point " << j << " unused, assigning height " << maxheight + 1 << std::endl;
 	  }
 	  //	  std::cout << double(maxheight) + 1;
-	  std::cout << maxheight.get_d() + 1;
+	  std::cout << maxheight.get_str();
 	}
 	std::cout << ",";
       }
@@ -104,14 +104,14 @@ bool LPinterface::has_interior_point() {
       const Field x_j = Field(_solptr->sol[j+1]);
       if (_support.contains(j)) {
 	//	std::cout << double(x_j);
-	std::cout << x_j.get_d();
+	std::cout << x_j.get_str();
       }
       else {
 	if (CommandlineOptions::debug()) {
 	  std::cerr << "point " << j << " unused, assigning height " << maxheight + 1 << std::endl;
 	}
 	//	std::cout << double(maxheight) + 1;
-	std::cout << maxheight.get_d() + 1;
+	std::cout << maxheight.get_str();
       }
       std::cout << ")" << std::endl;
       if (CommandlineOptions::debug()) {

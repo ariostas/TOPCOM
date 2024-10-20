@@ -21,6 +21,10 @@
 #endif
 #include "HashMap.hh"
 
+#ifdef STL_CHIROTOPE
+#include <tr1/unordered_map>
+#endif
+
 #include "CommandlineOptions.hh"
 
 #include "StairCaseMatrix.hh"
@@ -32,7 +36,80 @@ typedef SparseIntegerSet                basis_type;
 #else
 typedef IntegerSet                      basis_type;
 #endif
-typedef HashMap<basis_type, int>        chirotope_data;
+#ifdef STL_CHIROTOPE
+typedef std::tr1::unordered_map<basis_type, int> chirotope_data;
+
+inline std::ostream& operator<<(std::ostream& ost, const chirotope_data& cd) {
+  for (chirotope_data::const_iterator iter = cd.begin();
+       iter != cd.end();
+       ++iter) {
+    ost << iter->first << "->" << iter->second;
+  }
+  return ost;
+}
+
+inline std::istream& operator>>(std::istream& ist, chirotope_data& cd) {
+  char dash;
+  char arrow;
+
+  basis_type basis_reader;
+  int        int_reader;
+
+  char c;
+
+  cd.clear();
+  ist >> std::ws >> c;
+  if (c == '[') {
+    while (ist >> std::ws >> c) {
+      if (c == ']') {
+	break;
+      }
+      if (c == ',') {
+	continue;
+      }
+      ist.putback(c);
+      if (!(ist >> std::ws >> basis_reader)) {
+#ifdef READ_DEBUG
+	std::cerr << "std::istream& operator>>(std::istream&, chirotope_data&): "
+		  << "key not found." << std::endl;
+#endif
+	ist.clear(std::ios::failbit);
+	return ist;
+      }
+      if (!(ist >> std::ws >> dash >> arrow)) {
+#ifdef READ_DEBUG
+	std::cerr << "std::istream& operator>>(std::istream&, chirotope_data&): "
+		  << "`->' not found." << std::endl;
+#endif
+	ist.clear(std::ios::failbit);
+	return ist;
+      }
+      if (!(ist >> std::ws >> int_reader)) {
+#ifdef READ_DEBUG
+	std::cerr << "std::istream& operator>>(std::istream&, chirotope_data&): "
+		  << "data not found." << std::endl;
+#endif
+	ist.clear(std::ios::failbit);
+	return ist;
+      }
+      cd[basis_reader] = int_reader;
+    }
+  }
+  else {
+#ifdef READ_DEBUG
+    std::cerr << "std::istream& operator>>(std::istream&, chirotope_data&): "
+	 << "missing `" << '[' << "'." << std::endl;
+#endif
+    ist.clear(std::ios::failbit);
+    return ist;
+  }
+  ist.clear(std::ios::goodbit);
+  return ist;
+}
+
+#else
+typedef HashMap<basis_type, int>                 chirotope_data;
+#endif
 
 inline const char int2sign(const int i) {
   switch(i) {
@@ -58,17 +135,21 @@ public:
   inline RealChiro();
   inline RealChiro(const RealChiro&);
   inline RealChiro(const parameter_type&, const parameter_type&);
-  RealChiro(const PointConfiguration&);
+  RealChiro(const PointConfiguration&, bool preprocess=true);
   //assignment:
   inline RealChiro& operator=(const RealChiro& chiro);
   // accessors:
   inline parameter_type no() const;
   inline parameter_type rank() const;  
+  inline size_type load() const;
   // functions:
+  void erase_random();
   const basis_type find_non_deg_basis() const;
   RealChiro dual() const;
   // operators:
   inline const int operator()(const basis_type&) const;
+  const int operator()(const basis_type&  prebasis,
+		       const Permutation& lex_extension_perm) const;
   inline const bool operator==(const RealChiro&) const;
   inline const bool operator!=(const RealChiro&) const;
   // stream output/input:
@@ -116,6 +197,13 @@ inline RealChiro& RealChiro::operator=(const RealChiro& chiro) {
 // accessors:
 inline parameter_type RealChiro::no()   const { return _no; }
 inline parameter_type RealChiro::rank() const { return _rank; }
+inline parameter_type RealChiro::load() const { 
+#ifdef STL_CHIROTOPE
+  return chirotope_data::size();
+#else
+  return chirotope_data::load();
+#endif
+}
 
 // operators:
 inline const int RealChiro::operator()(const basis_type& basis) const {
@@ -125,11 +213,19 @@ inline const int RealChiro::operator()(const basis_type& basis) const {
     exit(1);
   }
 #endif
+#ifndef STL_CHIROTOPE
   return *member(basis);
+#else
+  return find(basis)->second;
+#endif
 }
 
 inline const bool RealChiro::operator==(const RealChiro& chiro) const {
+#ifdef STL_CHIROTOPE
+  return ((*this) == chiro);
+#else
   return chirotope_data::operator==(chiro);
+#endif
 }
 
 inline const bool RealChiro::operator!=(const RealChiro& chiro) const {

@@ -14,6 +14,15 @@
 
 const char Matrix::col_delim_char = '\t';
 
+// assignment:
+Matrix& Matrix::operator=(const Matrix& matrix) {
+  if (this == &matrix) {
+    return *this;
+  }
+  matrix_data::operator=(matrix);
+  return *this;
+}
+
 const Vector Matrix::row(const size_type index) const {
   Vector result(coldim());
   for (size_type i = 0; i < coldim(); ++i) {
@@ -22,7 +31,7 @@ const Vector Matrix::row(const size_type index) const {
   return result;
 }
 void Matrix::row_resize(const size_type new_size, const Field& init_entry) {
-  for (size_type i = 0; i < rowdim(); ++i) {
+  for (size_type i = 0; i < coldim(); ++i) {
     (*this)[i].resize(new_size,init_entry);
   }
 }
@@ -82,6 +91,106 @@ Matrix& Matrix::swap_rows(const size_type i, const size_type j) {
     col[j] = tmp;
   }
   return *this;
+}
+Matrix& Matrix::row_normal_form(const size_type start_row, const size_type start_col, const Field& scale) {
+#ifdef SUPER_VERBOSE
+  if (CommandlineOptions::debug()) {
+    std::cerr << "calling elimination of" << std::endl;
+    this->pretty_print(std::cerr);
+    std::cerr << "below row " << start_row << " to the right of column " << start_col << std::endl;
+  }
+#endif
+
+  // swap row with left-most non-zero to the top at start_row:
+#ifdef SUPER_VERBOSE
+  if (CommandlineOptions::debug()) {
+    std::cerr << "swapping left-most non-zero to the top ..." << std::endl;
+  }
+#endif
+  if ((start_row == rowdim()) || (start_col == coldim())) {
+    return *this;
+  }
+  size_type minnonzerocol(coldim());
+  size_type minnonzerocolrow(rowdim());
+  Field new_scale(scale);
+  for (size_type i = start_row; i < rowdim(); ++i) {
+    for (size_type j = start_col; j < coldim(); ++j) {
+      if (((*this)(i, j) != ZERO) && (j < minnonzerocol)) {
+	minnonzerocol = j;
+	minnonzerocolrow = i;
+      }
+    }
+  }
+  if (minnonzerocolrow != start_row) {
+#ifdef SUPER_VERBOSE
+    if (CommandlineOptions::debug()) {
+      std::cerr << "... by swapping row " << start_row << " and row " << minnonzerocolrow << " ..." << std::endl;
+    }
+#endif
+    swap_rows(minnonzerocolrow, start_row);
+    new_scale = new_scale * MINUSONE;
+  }
+#ifdef SUPER_VERBOSE
+  if (CommandlineOptions::debug()) {
+    this->pretty_print(std::cerr);
+    std::cerr << "... done." << std::endl;
+  }
+#endif
+  
+  // eliminate under left-most non-zero:
+#ifdef SUPER_VERBOSE
+  if (CommandlineOptions::debug()) {
+    std::cerr << "eliminating all non-zeros below element at index (" << start_row << "," << minnonzerocol << ") ..." << std::endl;
+  }
+#endif
+  const Field eraser((*this)(start_row, minnonzerocol));
+  for (size_type i = start_row + 1; i < rowdim(); ++i) {
+    if ((*this)(i, minnonzerocol) != ZERO) {
+#ifdef SUPER_VERBOSE
+      if (CommandlineOptions::debug()) {
+	std::cerr << "\t eliminating row " << i << " ..." << std::endl;
+      }
+#endif
+      const Field delinquent((*this)(i, minnonzerocol));
+      for (size_type j = minnonzerocol; j < coldim(); ++j) {
+	(*this)(i,j) -= delinquent / eraser * (*this)(start_row,j);
+      }
+#ifdef SUPER_VERBOSE
+      if (CommandlineOptions::debug()) {
+	this->pretty_print(std::cerr);
+	std::cerr << "\t ... done." << std::endl;
+      }
+#endif
+    }
+  }
+#ifdef SUPER_VERBOSE
+  if (CommandlineOptions::debug()) {
+    this->pretty_print(std::cerr);
+    std::cerr << "... done." << std::endl;
+  }
+#endif
+
+  // delete trailing zero rows below start_row:
+#ifdef SUPER_VERBOSE
+  if (CommandlineOptions::debug()) {
+    std::cerr << "deleting all-zero rows ..." << std::endl;
+  }
+#endif
+  while (row(rowdim() - 1).is_zero()) {
+#ifdef SUPER_VERBOSE
+    if (CommandlineOptions::debug()) {
+      std::cerr << "\t deleting row " << rowdim() - 1 << " ..." << std::endl;
+    }
+#endif
+    row_resize(rowdim() - 1);
+  }
+#ifdef SUPER_VERBOSE
+  if (CommandlineOptions::debug()) {
+    this->pretty_print(std::cerr);
+    std::cerr << "... done." << std::endl;
+  }
+#endif
+  return row_normal_form(start_row + 1, minnonzerocol + 1, new_scale);
 }
 
 const Field left_upper_det(const Matrix& matrix) {
@@ -161,6 +270,15 @@ const Matrix multiply(const Matrix& matrix1, const Matrix& matrix2) {
     for (size_type j = 0; j < matrix2.coldim(); ++j) {
       result[j][i] = inner_product(row, matrix2.col(j));
     }
+  }
+  return result;
+}
+
+// transformation:
+Vector Matrix::StackOfAllColumns() const {
+  Vector result;
+  for (size_type j = 0; j < this->coldim(); ++j) {
+    result.stack(this->col(j));
   }
   return result;
 }

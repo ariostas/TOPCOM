@@ -2,6 +2,8 @@
 ## Makefile for building external packages
 ## 2003/01/27 jr
 ##############################################################################
+SH           = sh
+
 GMP_DONE     = gmp_done
 CDD_DONE     = cdd_done
 
@@ -36,7 +38,7 @@ $(GMP_DONE): $(GMP_DIR)
 	@echo ==============================================================================
 	@echo making gmp ...
 	@echo ==============================================================================
-	csh -c 'cd $(GMP_DIR); ./configure --prefix=`pwd`/.. --enable-cxx'
+	$(SH) -c 'cd $(GMP_DIR); ./configure --prefix=`pwd`/.. --enable-cxx'
 	make -C $(GMP_DIR)
 	make -C $(GMP_DIR) check
 	make -C $(GMP_DIR) install
@@ -49,7 +51,7 @@ $(CDD_DONE): $(CDD_DIR)
 	@echo ==============================================================================
 	@echo making cdd ...
 	@echo ==============================================================================
-	csh -c 'cd $(CDD_DIR); ./configure --prefix=`pwd`/..'
+	$(SH) -c 'cd $(CDD_DIR); ./configure --prefix=`pwd`/..'
 	make -C $(CDD_DIR)
 	make -C $(CDD_DIR) install
 	@echo ==============================================================================

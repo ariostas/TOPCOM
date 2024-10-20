@@ -28,6 +28,8 @@ public:
   inline Vector(const size_type, const Field& = ZERO);
   // destructor:
   inline ~Vector();
+  // assignment:
+  inline Vector& operator=(const Vector&);
   // accessors:
   bool is_zero() const;
   // operations in place:
@@ -56,6 +58,15 @@ inline Vector::Vector(const size_type init_size, const Field& init_entry) :
 
 // destructor:
 inline Vector::~Vector() {}
+
+// assignment:
+inline Vector& Vector::operator=(const Vector& vector) {
+  if (this == &vector) {
+    return *this;
+  }
+  vector_data::operator=(vector);
+  return *this;
+}
 
 #endif
 

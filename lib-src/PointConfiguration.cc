@@ -48,7 +48,7 @@ const Field PointConfiguration::volume() const {
 	 ++iter) {
       basis_matrix.augment((*this)[*iter]);
     }
-    result += det(basis_matrix);
+    result += abs(det(basis_matrix));
   }
   return result;
 }
@@ -87,6 +87,11 @@ PointConfiguration& PointConfiguration::direct_sum(const PointConfiguration& p) 
 
 PointConfiguration& PointConfiguration::homogenize() {
   stack(Matrix(1, no(), ONE));
+  return *this;
+}
+
+PointConfiguration& PointConfiguration::transform_to_full_rank() {
+  Matrix::row_normal_form();
   return *this;
 }
 

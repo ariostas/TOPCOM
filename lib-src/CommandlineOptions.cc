@@ -22,6 +22,7 @@ bool      CommandlineOptions::_fine_only               = false;
 bool      CommandlineOptions::_reduce_points           = false;
 bool      CommandlineOptions::_dont_add_points         = false;
 bool      CommandlineOptions::_output_triangs          = false;
+bool      CommandlineOptions::_output_flips            = false;
 bool      CommandlineOptions::_compute_all             = false;
 bool      CommandlineOptions::_preprocess              = false;
 bool      CommandlineOptions::_check_regular           = false;
@@ -33,6 +34,7 @@ bool      CommandlineOptions::_output_heights          = false;
 bool      CommandlineOptions::_use_soplex              = false;
 bool      CommandlineOptions::_dump_status             = false;
 bool      CommandlineOptions::_read_status             = false;
+size_type CommandlineOptions::_report_frequency        = 1000UL;
 size_type CommandlineOptions::_sometimes_frequency     = 10000UL;
 size_type CommandlineOptions::_chirocache              = 1000000UL;
 size_type CommandlineOptions::_localcache              = 1000000UL;
@@ -62,8 +64,11 @@ void CommandlineOptions::init(const int argc, const char** argv) {
       std::cout << "options concerning shell output:" << std::endl;
       std::cout << "-h or --help         : print this help message" << std::endl;
       std::cout << "-v                   : write verbose information to stderr." << std::endl;
+      std::cout << "--reportfrequency [n]: report every [n]th new triangulation." << std::endl;
       std::cout << "-d                   : write debug information to stderr." << std::endl;
       std::cout << "--heights            : write height vectors for triangulations to stdout (implies --regular)." 
+		<< std::endl;
+      std::cout << "--flips              : write flips as pairs of triangulation IDs to stdout." 
 		<< std::endl;
       std::cout << std::endl;
      
@@ -73,7 +78,9 @@ void CommandlineOptions::init(const int argc, const char** argv) {
 
       std::cout << "options for reporting properties of discovered triangulations:" << std::endl;
       std::cout << "--flipdeficiency     : report flip deficiency in triangulations to stderr." << std::endl;
-      std::cout << "--frequency [n]      : check for regularity every [n]th triangulation and exit if regular." 
+      std::cout << "--checkfrequency [n] : check for regularity every [n]th triangulation and exit if regular." 
+		<< std::endl;
+      std::cout << "--frequency [n]      : (deprecated) check for regularity every [n]th triangulation and exit if regular." 
 		<< std::endl;
       std::cout << std::endl;
 
@@ -118,6 +125,14 @@ void CommandlineOptions::init(const int argc, const char** argv) {
 
       std::cerr << " -v             : verbose output activated" << std::endl;
     }
+    if (strcmp(argv[i], "--reportfrequency") == 0) {
+      if (argc > i + 1) {
+	_report_frequency = (size_type)atol(argv[i+1]);
+	_verbose = true;
+
+	std::cerr << "--reportrequency : report every " << _dump_frequency << "th new triangulation" << std::endl;
+      }
+    }
     if (strcmp(argv[i], "-d") == 0) {
       std::cerr << " -d             : debug output activated" << std::endl;
 
@@ -129,6 +144,12 @@ void CommandlineOptions::init(const int argc, const char** argv) {
       _output_heights = true;
       _check_sometimes = false;
       _check_regular = true;
+    }
+
+    if (strcmp(argv[i], "--flips") == 0) {
+      std::cerr << "--flips        : output of flips activated" << std::endl;
+
+      _output_flips = true;
     }
 
     // options for checking input:
@@ -145,8 +166,24 @@ void CommandlineOptions::init(const int argc, const char** argv) {
       _neighborcount = true;
     }
     if (strcmp(argv[i], "--frequency") == 0) {
+      std::cerr << "WARNING:" << std::endl;
+      std::cerr << "--frequency deprecated, please use --checkfrequency instead." << std::endl;
       if (_check_regular) {
 	std::cerr << "--frequency cannot be used with --regular, ignoring --frequency." << std::endl;
+      }
+      else {
+	_check_regular = false;
+	_check_sometimes = true;
+	if (argc > i + 1) {
+	  _sometimes_frequency = (size_type)atol(argv[i+1]);
+	}
+
+        std::cerr << "--frequency     : check regularity every " << _sometimes_frequency << "th triangulation acticated" << std::endl;
+      }
+    }
+    if (strcmp(argv[i], "--checkfrequency") == 0) {
+      if (_check_regular) {
+	std::cerr << "--checkfrequency cannot be used with --regular, ignoring --checkfrequency." << std::endl;
       }
       else {
 	_check_regular = false;
@@ -296,6 +333,9 @@ void CommandlineOptions::init(const int argc, const char** argv) {
     }
     if (strcmp(argv[i], "-O") == 0) {
       _output_triangs = true;
+    }
+    if (strcmp(argv[i], "-E") == 0) {
+      _output_flips = true;
     }
     if (strcmp(argv[i], "-P") == 0) {
       _preprocess = true;

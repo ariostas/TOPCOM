@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 // 
 // IntegerSet.hh
 //
@@ -320,6 +320,27 @@ inline __is_const_iterator __is_const_iterator::operator++(int) {
   ++(*this);
   return tmp;
 }
+
+#if defined (STL_CONTAINERS) || defined (STL_SYMMETRIES) || defined (STL_CHIROTOPE) || defined (NEED_STL_HASH)
+
+#include <tr1/unordered_map>
+#include <tr1/unordered_set>
+
+namespace std {
+  namespace tr1 {
+    template<>				
+    struct hash<IntegerSet> {
+      std::size_t operator()(const IntegerSet& is) const {
+ 	long res(0);
+ 	for (int i = 0; i < is.keysize(); ++i) {
+ 	  res ^= is.key(i);
+ 	}
+ 	return res;
+      }
+    };      
+  };
+};                                            
+#endif
 
 #endif
 // eof IntegerSet.hh

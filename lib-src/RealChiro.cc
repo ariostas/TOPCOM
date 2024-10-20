@@ -13,7 +13,7 @@
 
 #include "RealChiro.hh"
 
-RealChiro::RealChiro(const PointConfiguration& points) : 
+RealChiro::RealChiro(const PointConfiguration& points, bool preprocess) : 
   chirotope_data(), _no(points.coldim()), _rank(points.rowdim()) {
   for (parameter_type i = 0; i < _no - _rank + 1; ++i) {
     _recursive_chiro(points[i], points, basis_type(i), i + 1, 1, false);
@@ -24,7 +24,39 @@ RealChiro::RealChiro(const PointConfiguration& points) :
   }
 }
 
+const int RealChiro::operator()(const basis_type&  prebasis,
+				const Permutation& lex_extension_perm) const {
+  assert(lex_extension_perm.n() == no());
+  assert(lex_extension_perm.k() <= no());
+  Permutation basis_perm(no(), rank() - 1, prebasis);
+  basis_type basis(prebasis);
+  for (size_type i = 0; i < lex_extension_perm.k(); ++i) {
+    if (basis.contains(lex_extension_perm[i])) {
+      continue;
+    }
+    basis += lex_extension_perm[i];
+    const int basis_sign((*this)(basis));
+    if (basis_sign == 0) {
+      basis -= lex_extension_perm[i];
+      continue;
+    }
+    basis_perm.append(lex_extension_perm[i]);
+    int perm_sign = basis_perm.sign();
+    return perm_sign * basis_sign;
+  }
+  return 0;
+}
 // functions:
+void RealChiro::erase_random() {
+#ifdef STL_CHIROTOPE
+  size_type random_index(random() % this->size());
+  chirotope_data::iterator iter = this->begin();
+  chirotope_data::erase(iter);
+#else
+  chirotope_data::erase_random();
+#endif
+}
+
 const basis_type RealChiro::find_non_deg_basis() const {
   basis_type result;
   if (_no == 0) {
@@ -49,13 +81,18 @@ RealChiro RealChiro::dual() const {
   result._no = _no;
   result._rank = _no - _rank;
   for (const_iterator iter = begin(); iter != end(); ++iter) {
+#ifdef STL_CHIROTOPE
+    const basis_type basis = iter->first;
+    const int basis_sign = iter->second;
+#else
     const basis_type basis = iter->key();
     const int basis_sign = iter->data();
+#endif
     const basis_type dualbasis(groundset - basis);
     Permutation perm(dualbasis);
     perm.append(Permutation(basis));
     int perm_sign = perm.sign(result._rank);
-    result.insert(dualbasis, perm_sign * basis_sign);
+    result[dualbasis] = perm_sign * basis_sign;
 #ifdef COMPUTATIONS_DEBUG
     if (perm.sign() != perm_sign) {
       std::cerr << "RealChiro RealChiro::dual() const: "
@@ -188,7 +225,7 @@ std::istream& RealChiro::read_string(std::istream& ist) {
   Permutation perm(_no, _rank);
   do {
     if (ist >> c) {
-      insert(basis_type(perm), sign2int(c));
+      (*this)[basis_type(perm)] = sign2int(c);
     }
     else {
 #ifdef READ_DEBUG
@@ -215,7 +252,7 @@ void RealChiro::_recursive_chiro(const StairCaseMatrix&    current,
       basis_type newbasis(basis);
       newbasis += i;
       if (step + 1 == _rank) {
-	insert(newbasis, sign(ZERO));
+	(*this)[newbasis] = sign(ZERO);
 	if (CommandlineOptions::verbose()) {
 #ifdef MEGA_VERBOSE
 	  std::cerr << "inserting sign for basis: " << basis << std::endl;
@@ -256,7 +293,7 @@ void RealChiro::_recursive_chiro(const StairCaseMatrix&    current,
 	if (CommandlineOptions::debug()) {
 	  std::cerr << "determinant at leaf: " << det(next) << std::endl;
 	}
-	insert(newbasis, sign(det(next)));
+	(*this)[newbasis] = sign(det(next));
 	if (CommandlineOptions::verbose()) {
 #ifdef MEGA_VERBOSE
 	  std::cerr << "inserting sign for basis: " << basis << std::endl;

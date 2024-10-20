@@ -8,8 +8,46 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "Symmetry.hh"
+#include "CommandlineOptions.hh"
 
 // Symmetry:
+
+Symmetry::Symmetry(const Permutation& p, const bool cycle) : Permutation(p.n(),p.n()) {
+  const parameter_type np = p.n();
+  const parameter_type kp = p.k();
+  if (cycle) {
+    if (CommandlineOptions::debug()) {
+      std::cerr << "cycle to convert: " << p << std::endl;
+    }
+    if (kp > 1) {
+      parameter_type i = 0;
+      parameter_type first = p[0];
+      parameter_type preimage = first;
+      while (++i < kp) {
+	assert(preimage < np);
+	parameter_type image = p[i];
+	assert(image < np);
+	(*this)[preimage] = image;
+	preimage = image;
+      }
+      (*this)[preimage] = first;
+    }
+  }
+  else {
+    if (CommandlineOptions::debug()) {
+      std::cerr << "permutation to use: " << p << std::endl;
+    }
+    if (kp < np) {
+      std::cerr << "error while initializing symmetry from partial permutation" << std::endl;
+      exit(1);
+    }
+    else {
+      for (parameter_type i = 0; i < np; ++i) {
+	(*this)[i] = p[i];
+      }
+    }
+  }
+}
 
 const SimplicialComplex Symmetry::operator()(const SimplicialComplex& sc) const {
   SimplicialComplex result;
@@ -23,7 +61,7 @@ const SimplicialComplex Symmetry::operator()(const SimplicialComplex& sc) const 
 
 const TriangNode Symmetry::operator()(const TriangNode& tn) const {
   SimplicialComplex result_complex((*this)((SimplicialComplex)tn));
-  return TriangNode(tn.no(), tn.rank(), result_complex);
+  return TriangNode(tn.ID(), tn.no(), tn.rank(), result_complex);
 }
  
 const FlipRep Symmetry::operator()(const FlipRep& fr) const {
@@ -77,6 +115,27 @@ Symmetry Symmetry::operator*(const Symmetry& s) const {
   Symmetry result(*this);
   for (parameter_type i = 0; i < result.k(); ++i) {
     result[i] = (*this)[s[i]];
+  }
+  return result;
+}
+
+Matrix Symmetry::PermutationMatrix() const {
+  const parameter_type n = this->n();
+  Matrix result(n,n,ZERO);
+  for (parameter_type i = 0; i < n; ++i) {
+    result((*this)[i], i) = ONE;
+  }
+  return result;
+}
+
+Matrix Symmetry::ReducedPermutationMatrix() const {
+  const parameter_type n = this->n();
+  Matrix result(n-1, n-1, ZERO);
+  for (parameter_type i = 0; i < n-1; ++i) {
+    const parameter_type j((*this)[i]);
+    if (j < n-1) {
+      result(j, i) = ONE;
+    }
   }
   return result;
 }

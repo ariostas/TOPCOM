@@ -89,12 +89,14 @@ const int SymmetricBFS::_old_symmetry_class(const TriangNode& tnode) {
 #endif
       _representative = g(tnode);
 
-      if (!_orbit.member(_representative)) {
-#ifndef STL_CONTAINERS
-	if (_all_triangs.member(_representative)) {
-#else
-	if (_all_triangs.find(_representative) != _all_triangs.end()) {
-#endif
+      triang_container_type::const_iterator t_iter = _all_triangs.find(_representative);
+// #ifndef STL_CONTAINERS
+//       if (!_orbit.member(_representative)) {
+// 	if (_all_triangs.member(_representative)) {
+// #else
+      if (_orbit.find(_representative) == _orbit.end()) {
+	if (t_iter != _all_triangs.end()) {
+// #endif	  
 	  _orbit.clear();
 	  _orbitsize = 0;
 	  return 1;
@@ -130,7 +132,11 @@ const int SymmetricBFS::_old_symmetry_class(const TriangNode& tnode) {
 #endif
       _representative = g(tnode);
 
+#ifndef STL_CONTAINERS
       if (!_orbit.member(_representative)) {
+#else
+	if (_orbit.find(_representative) == _orbit.end()) {
+#endif
 	if (_rep_has_search_pred && CommandlineOptions::symmetries_are_affine()) {
 	  _orbit.insert(_representative);
 	}
@@ -164,7 +170,11 @@ const int SymmetricBFS::_old_symmetry_class(const TriangNode& tnode) {
       const Symmetry& g(*iter);
 #endif
       _representative = g(tnode);
+#ifndef STL_CONTAINERS
       if (!_orbit.member(_representative)) {      
+#else
+      if (_orbit.find(_representative) == _orbit.end()) {
+#endif
 	if ((_find_iter = _previous_triangs.find(_representative)) != _previous_triangs.end()) {
 #ifndef STL_SYMMETRIES
 	  _transformation = iter->key();
@@ -218,7 +228,11 @@ const int SymmetricBFS::_old_symmetry_class(const TriangNode& tnode) {
       _representative = g(tnode);
 
       // check whether we already have that image of tnode in the orbit:
+#ifndef STL_CONTAINERS
       if (!_orbit.member(_representative)) {
+#else
+      if (_orbit.find(_representative) == _orbit.end()) {
+#endif
 
 	// if not, check the search predicate (e.g., regularity):
 	if (_rep_has_search_pred && CommandlineOptions::symmetries_are_affine()) {
@@ -258,9 +272,11 @@ void SymmetricBFS::_process_newtriang(const TriangNode&     current_triang,
     if (_orbitsize > 0) {
       if ((*_output_pred_ptr)(*_pointsptr, *_chiroptr, next_triang)) {
 	++_symcount;
+	--_reportcount;
 	_totalcount += _orbitsize;
 	(*_cout_triang_ptr)(_symcount, next_triang);
-	if (CommandlineOptions::verbose() && (_symcount % 100 == 0)) {
+	if (CommandlineOptions::verbose() && (_reportcount == 0)) {
+	  _reportcount = CommandlineOptions::report_frequency();
 	  std::cerr << _symcount << " symmetry classes --- "
 		    << _totalcount << " total triangulations --- "
 #ifndef STL_CONTAINERS
@@ -278,15 +294,34 @@ void SymmetricBFS::_process_newtriang(const TriangNode&     current_triang,
   else {
     if (where < 0) {
 
-      // mark all equivalent flips in next_triang:
+      // next_triang was found before: mark all equivalent flips in next_triang:
       const FlipRep& inversefliprep(current_fliprep.inverse());
       _node_symmetries = SymmetryGroup(_symmetries, next_triang);
       _mark_equivalent_flips(next_triang, _find_iter, inversefliprep);
+      if (CommandlineOptions::output_flips()) {
+	// output flip to found triangulation pointed to by _find_iter:
+#ifndef STL_CONTAINERS
+	size_type next_ID(_find_iter->key().ID());
+#else
+	size_type next_ID(_find_iter->first.ID());
+#endif
+	std::cout << "flip[" 
+		  << _flipcount << "]:=" 
+		  << '{' 
+		  << current_triang.ID() 
+		  << ',' 
+		  << next_ID
+		  << "};" 
+		  << " // to known triang, supported by "
+		  << current_fliprep
+		  << std::endl;
+	++_flipcount;
+      }
       return;
     }
     if (where > 0) {
 
-      // mark all equivalent flips in representative:
+      // a triangulation equivalent to next_triang was found before: mark all equivalent flips in representative:
       const FlipRep& inversefliprep(_transformation(current_fliprep.inverse()));
       _node_symmetries = SymmetryGroup(_symmetries, _representative);
       _mark_equivalent_flips(_representative, _find_iter, inversefliprep);
@@ -306,11 +341,27 @@ void SymmetricBFS::_process_newtriang(const TriangNode&     current_triang,
 					   _node_symmetries,
 					   _only_fine_triangs);
       _mark_equivalent_flips(next_triang, next_flips, current_fliprep.inverse());
+      if (CommandlineOptions::output_flips()) {
+	// output flip to next_triang:
+	std::cout << "flip[" 
+		  << _flipcount << "]:=" 
+		  << '{' 
+		  << current_triang.ID() 
+		  << ',' 
+		  << next_triang.ID() 
+		  << "};" 
+		  << " // supported by "
+		  << current_fliprep
+		  << std::endl;
+	++_flipcount;
+      }
       if ((*_output_pred_ptr)(*_pointsptr, *_chiroptr, next_triang)) {
 	++_symcount;
+	--_reportcount;
 	_totalcount += _orbitsize;
 	(*_cout_triang_ptr)(_symcount, next_triang);
-	if (CommandlineOptions::verbose() && (_symcount % 100 == 0)) {
+	if (CommandlineOptions::verbose() && (_reportcount == 0)) {
+	  _reportcount = CommandlineOptions::report_frequency();
 	  std::cerr << _symcount << " symmetry classes --- "
 		    << _totalcount << " total triangulations --- "
 #ifndef STL_CONTAINERS
@@ -370,7 +421,7 @@ void SymmetricBFS::_process_flips(const TriangNode&     current_triang,
     const FlipRep current_fliprep((*iter).first);
 #endif
     const Flip flip(current_triang, current_fliprep);
-    const TriangNode next_triang(current_triang, flip);
+    const TriangNode next_triang(_symcount, current_triang, flip);
     _process_newtriang(current_triang, current_flips, next_triang, current_fliprep);
   }
 }
@@ -612,9 +663,20 @@ std::istream& SymmetricBFS::read(std::istream& ist) {
 	std::cerr << "_symcount initialized with " << _symcount << std::endl;
       }
     }
+    if (keyword == "_reportcount") {
+      lastPos = dump_line.find_first_not_of(" ", pos);
+      std::string value = dump_line.substr(lastPos, dump_line.length());
+      std::istringstream istrst (value, std::ios::in);
+      if (!(istrst >> _reportcount)) {
+	std::cerr << "SymmetricBFS::read(std::istream& ist): error while reading _reportcount; exiting" << std::endl;
+	exit(1);
+      }
+      if (CommandlineOptions::debug()) {
+	std::cerr << "_reportcount initialized with " << _reportcount << std::endl;
+      }
+    }
   }
   return ist;
 }
-
 
 // eof SymmetricBFS.cc

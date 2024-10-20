@@ -1,3 +1,13 @@
+version 0.17.1: correction of read from input stream in Facets.hh
+	ID for triangulations allowing for an option to output flip edges
+version 0.17.0: new function to construct Birkhoff subpolytopes
+	new function to transform point configuration to full rank
+	representation (carefull: this may change normalized volumes)
+version 0.16.4: updated alternative STL structures to modern gcc
+	added command line option "--reportfrequency [n]" with the meaning
+	that every [n]th new triangulation triggers a report to stderr
+version 0.16.3: changed shell command for external builds from csh to sh
+	output heights in terms of exact fractions not doubles
 version 0.16.2: external includes/libs are now allways taken from
 	external/include resp. external/lib
 version 0.16.1: improved automatic build of external packages gmp and cdd

@@ -306,6 +306,10 @@ int ComputeTriangs::run(const int flags) {
 #else
 	  std::cerr << symmetries.size() << " symmetries in total." << std::endl;
 #endif
+	  if (CommandlineOptions::debug()) {
+	    std::cerr << "symmetries:" << std::endl;
+	    std::cerr << symmetries << std::endl;
+	  }
 	}
       }
     }
@@ -339,6 +343,10 @@ int ComputeTriangs::run(const int flags) {
 #else
       std::cerr << seed_symmetries.size() << " symmetries in total." << std::endl;
 #endif
+      if (CommandlineOptions::debug()) {
+	std::cerr << "symmetries:" << std::endl;
+	std::cerr << symmetries << std::endl;
+      }
     }
     if (CommandlineOptions::check()) {
       if (CommandlineOptions::verbose()) {
@@ -366,7 +374,7 @@ int ComputeTriangs::run(const int flags) {
       if (CommandlineOptions::verbose()) {
 	std::cerr << "count all flips of seed ..." << std::endl;
       }
-      const TriangNode tn(no, rank, seed);
+      const TriangNode tn(0, no, rank, seed);
       const TriangFlips tf(chiro, tn, seed_symmetries, fine_only);
       if (CommandlineOptions::verbose()) {
 // 	std::cerr << tf.flips().load() << " flips in total." << std::endl;

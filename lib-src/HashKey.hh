@@ -54,7 +54,7 @@ template<>
 class HashKey<Field> {
 public:
   inline size_type operator()(const Field& key, const size_type n) { 
-    std_ext::hash<Field> hash_obj;
+    static std_ext::hash<Field> hash_obj;
     return hash_obj(key); 
   }
 };

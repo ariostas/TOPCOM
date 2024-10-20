@@ -96,6 +96,14 @@ Permutation Permutation::deletion(const parameter_type m) const {
   return result;
 }
 
+Permutation Permutation::reverse() const {
+  Permutation result(_n,_k);
+  for (parameter_type i = 0; i < _k; ++i) {
+    result[i] = (*this)[_k-i-1];
+  }
+  return result;
+}
+
 bool Permutation::lexnext() {
   for (parameter_type i = 0; i < _k; ++i) {
     if ((*this)[_k - i - 1] == _n - i - 1) {

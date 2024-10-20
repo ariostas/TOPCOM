@@ -28,6 +28,7 @@ private:
   static bool      _reduce_points;
   static bool      _dont_add_points;
   static bool      _output_triangs;
+  static bool      _output_flips;
   static bool      _compute_all;
   static bool      _preprocess;
   static bool      _check_regular;
@@ -39,6 +40,7 @@ private:
   static bool      _use_soplex;
   static bool      _dump_status;
   static bool      _read_status;
+  static size_type _report_frequency;
   static size_type _sometimes_frequency;
   static size_type _chirocache;
   static size_type _localcache;
@@ -69,6 +71,7 @@ public:
   inline static bool      compute_all()             { return _compute_all; }
   inline static bool      preprocess()              { return _preprocess; }
   inline static bool      output_triangs()          { return _output_triangs; }
+  inline static bool      output_flips()            { return _output_flips; }
   inline static bool      check_regular()           { return _check_regular; }
   inline static bool      check_nonregular()        { return _check_nonregular; }
   inline static bool      check_sometimes()         { return _check_sometimes; }
@@ -78,6 +81,7 @@ public:
   inline static bool      use_soplex()              { return _use_soplex; }
   inline static bool      dump_status()             { return _dump_status; }
   inline static bool      read_status()             { return _read_status; }
+  inline static size_type report_frequency()        { return _report_frequency; }
   inline static size_type sometimes_frequency()     { return _sometimes_frequency; }
   inline static size_type chirocache()              { return _chirocache; }
   inline static size_type localcache()              { return _localcache; }

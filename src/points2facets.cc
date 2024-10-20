@@ -3,6 +3,7 @@
 #include "CommandlineOptions.hh"
 
 #include "Chirotope.hh"
+#include "PlacingTriang.hh"
 #include "Cocircuits.hh"
 #include "Facets.hh"
 
@@ -18,8 +19,11 @@ int main (const int argc, const char** argv) {
   PointConfiguration points;
   if (points.read(std::cin)) {
     Chirotope chiro(points, false);
-    Cocircuits cocircuits(chiro);
-    Facets(cocircuits).write(std::cout);
+    //    Cocircuits cocircuits(chiro, true);
+
+    // PlacingTriang method:
+    PlacingTriang triang(chiro);
+    Facets(chiro, triang.boundary_triang()).write(std::cout);
     return 0;
   }
   else {

@@ -18,10 +18,9 @@ D4xD2.result \
 D4xD2_reg.result \
 D4xD3.dat \
 D5xD2.dat \
-D5xD2.result.gz \
-D5xD2_reg.result.gz \
+D5xD2.result \
+D5xD2_reg.result \
 D6xD2.dat \
-D6xD2.result.gz \
 DkxDl.results \
 P10.dat \
 SantosTriang_Factor1.poly \

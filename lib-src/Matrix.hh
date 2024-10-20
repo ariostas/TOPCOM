@@ -30,6 +30,8 @@ public:
   inline Matrix(const size_type, const size_type, const Field& init_entry = ZERO);
   // destructor:
   inline ~Matrix();
+  // assignment:
+  Matrix& operator=(const Matrix&);
   // accessors:
   inline const size_type rowdim() const;
   inline const size_type coldim() const;
@@ -48,11 +50,14 @@ public:
   Matrix& stack(const Matrix&);
   Matrix& swap_cols(const size_type, const size_type);
   Matrix& swap_rows(const size_type, const size_type);
+  Matrix& row_normal_form(const size_type start_row = 0, const size_type start_col = 0, const Field& scale = 1);
   // out of place operations:
   friend const Field left_upper_det(const Matrix&);
   inline friend const Field det(const Matrix&);
   friend const Matrix transpose(const Matrix&);
   friend const Matrix multiply(const Matrix&, const Matrix&);
+  // transformation:
+  Vector StackOfAllColumns() const;
   // iostream:
   std::ostream& pretty_print(std::ostream& ost) const;
 };

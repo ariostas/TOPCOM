@@ -63,6 +63,10 @@ const bool VirtualChiro::_recursive_find_non_deg_basis(const StairCaseMatrix&   
     StairCaseMatrix next = current;
     next.augment((*_pointsptr)[i]);
     const basis_type newbasis(basis + i);
+    if (CommandlineOptions::debug()) {
+      std::cerr << "partial basis matrix:" << std::endl;
+      next.pretty_print(std::cerr);
+    }
     if (step + 1 == _pointsptr->rank()) {
       if (det(next) != 0) {
 	result = newbasis;

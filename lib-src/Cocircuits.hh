@@ -76,7 +76,7 @@ public:
   // constructors:
   inline Cocircuits();
   inline Cocircuits(const Cocircuits&);
-  Cocircuits(const Chirotope&);
+  Cocircuits(const Chirotope&, const bool only_positive=false);
   // destructor:
   inline ~Cocircuits();
   // accessors:

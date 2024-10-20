@@ -12,6 +12,43 @@
 
 #include "StairCaseMatrix.hh"
 
+void StairCaseMatrix::_eliminate(const size_type& ridx, const size_type& cidx, const size_type& cno) {
+  const size_type n = rowdim();
+  if ((*this)(ridx,ridx) == ZERO) {
+    for (size_type k = cidx; k < cidx + cno; ++k) {
+      if ((*this)(ridx,k) != ZERO) {
+	(*this).swap_cols(ridx,k);
+	_coefficient *= MINUSONE;
+	return;
+      }
+    }
+    if ((*this)(ridx,ridx) == ZERO) {
+      return;
+    }
+  }
+  const Field& eraser = (*this)(ridx,ridx);
+#ifdef SUPER_VERBOSE
+  std::cerr << "eraser = " << eraser << "; row : " << ridx << ", col: " << ridx << std::endl;
+#endif
+  for (size_type j = cidx; j < cidx + cno; ++j) {
+    const Field& delinquent = (*this)(ridx,j);
+#ifdef SUPER_VERBOSE
+    std::cerr << "delinquent = " << delinquent << "; row : " << ridx << ", col: " << j << std::endl;
+#endif
+    if (delinquent == ZERO) {
+      continue;
+    }
+    for (size_type k = ridx + 1; k < n; ++k) {
+      (*this)(k,j) -= (*this)(k,ridx) * delinquent / eraser;
+    }
+    (*this)(ridx,j) = ZERO;
+  }
+#ifdef SUPER_VERBOSE
+  std::cerr << "after step " << ridx << " of stair case transformation: " << std::endl;
+  (*this).pretty_print(std::cerr);
+#endif  
+}
+
 StairCaseMatrix& StairCaseMatrix::augment(const Matrix& matrix) {
   if (matrix.coldim() == 0) {
     return *this;
@@ -20,47 +57,14 @@ StairCaseMatrix& StairCaseMatrix::augment(const Matrix& matrix) {
   assert(rowdim() == matrix.rowdim());
   assert(coldim() + matrix.coldim() <= rowdim());
 #endif
-  size_type m = coldim();
+  const size_type m = coldim();
   Matrix::augment(matrix);
-  size_type n = rowdim();
 #ifdef SUPER_VERBOSE
   std::cerr << "before stair case transformation:" << std::endl;
   pretty_print(std::cerr);
 #endif
   for (size_type i = 0; i < m; ++i) {
-    if ((*this)(i,i) == ZERO) {
-      for (size_type k = m; k < m + matrix.coldim(); ++k) {
-	if ((*this)(i,k) != ZERO) {
-	  (*this).swap_cols(i,k);
-	  _coefficient *= MINUSONE;
-	  continue;
-	}
-      }
-      if ((*this)(i,i) == ZERO) {
-	continue;
-      }
-    }
-    const Field& eraser = (*this)(i,i);
-#ifdef SUPER_VERBOSE
-    std::cerr << "eraser = " << eraser << "; row : " << i << ", col: " << i << std::endl;
-#endif
-    for (size_type j = m; j < m + matrix.coldim(); ++j) {
-      const Field& delinquent = (*this)(i,j);
-#ifdef SUPER_VERBOSE
-      std::cerr << "delinquent = " << delinquent << "; row : " << i << ", col: " << j << std::endl;
-#endif
-      if (delinquent == ZERO) {
-	continue;
-      }
-      for (size_type k = i + 1; k < n; ++k) {
-	(*this)(k,j) -= (*this)(k,i) * delinquent / eraser;
-      }
-      (*this)(i,j) = ZERO;
-    }
-#ifdef SUPER_VERBOSE
-    std::cerr << "after step " << i << " of stair case transformation: " << std::endl;
-    (*this).pretty_print(std::cerr);
-#endif
+    _eliminate(i, m, matrix.coldim());
   }
 #ifdef SUPER_VERBOSE
   std::cerr << "after stair case transformation: " << std::endl;

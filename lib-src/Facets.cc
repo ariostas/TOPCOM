@@ -41,6 +41,30 @@ Facets::Facets(const Cocircuits& cocircuits) :
   }
 }
 
+Facets::Facets(const Chirotope& chiro, const SimplicialComplex& bd_triang) : 
+  facets_data(), _no(chiro.no()), _rank(chiro.rank()) {
+  const Simplex allpoints(0, no());
+  size_type count(0);
+  for (SimplicialComplex::const_iterator iter = bd_triang.begin();
+       iter != bd_triang.end();
+       ++iter) {
+    Simplex coplanar_set(*iter);
+
+    // the following merges all other coplanar points:
+    Cocircuit cocircuit(chiro, coplanar_set);
+    
+    // all cocircuits spanned by boundary simplices are either positive or negative:
+    Simplex newfacet(allpoints - cocircuit.first - cocircuit.second);
+    if (CommandlineOptions::debug()) {
+      std::cerr << "new facet: " << newfacet << " from cocircuit " << cocircuit << std::endl;
+    }
+    facets_data::insert(newfacet);
+  }
+  if (CommandlineOptions::verbose()) {
+    std::cerr << card() << " facets in total." << std::endl;
+  }
+}
+
 std::ostream& Facets::write(std::ostream& ost) const {
   ost << _no << ',' << _rank << ':' << std::endl;
   ost << '{' << std::endl;
@@ -87,7 +111,7 @@ std::istream& Facets::read(std::istream& ist) {
     ist.clear(std::ios::failbit);
     return ist;
   }
-  ist >> *this;
+  ist >> (facets_data&)*this;
   return ist;
 }
 

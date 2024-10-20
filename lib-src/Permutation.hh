@@ -43,6 +43,7 @@ public:
   const int sort();
   Permutation complement() const;
   Permutation deletion(const parameter_type m) const;
+  Permutation reverse() const;
   bool lexnext();
   // stream output/input:
   friend std::ostream& operator<<(std::ostream& ost, const Permutation& p);

@@ -55,17 +55,21 @@ Cocircuit::Cocircuit(const Chirotope& chiro, const IntegerSet& coplanar_set) {
 }
 
 // Cocircuits:
-Cocircuits::Cocircuits(const Chirotope& chiro) : 
+Cocircuits::Cocircuits(const Chirotope& chiro, const bool only_positive) : 
   cocircuits_data(), _no(chiro.no()), _rank(chiro.rank()) {
   size_type count(0);
-  if (_no == _rank) {
-    return;
-  }
+  // if (_no == _rank) {
+  //   return;
+  // }
   Permutation coplanar_perm(_no, _rank - 1);
   do {
     IntegerSet coplanar_set(coplanar_perm);
     if (CommandlineOptions::debug()) {
-      std::cerr << "computing sign vectors from spanning " 
+      std::cerr << "computing ";
+      if (only_positive) {
+	std::cerr << " positive ";
+      }
+      std::cerr << " sign vectors from spanning " 
 	       << _rank - 1 << "-subset " 
 	       << coplanar_set
 	       << " ..."
@@ -76,10 +80,17 @@ Cocircuits::Cocircuits(const Chirotope& chiro) :
       std::cerr << "... done." << std::endl;
       std::cerr << "result: " << cocircuit << std::endl;
     }
+    if ((only_positive) && !cocircuit.first.is_empty() && !cocircuit.second.is_empty()) {
+      continue;
+    }
     if (!cocircuit.first.is_empty() || !cocircuit.second.is_empty()) {
       insert(cocircuit.first + cocircuit.second, cocircuit);
       if (CommandlineOptions::verbose() && (++count % 10000 == 0)) {
-	std::cerr << load() << " cocircuits computed so far." << std::endl;
+	std::cerr << load();
+	if (only_positive) {
+	  std::cerr << " positive ";
+	}
+	std::cerr << " cocircuits computed so far." << std::endl;
       }
     }
   } while (coplanar_perm.lexnext());

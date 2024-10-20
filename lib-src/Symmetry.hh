@@ -8,6 +8,7 @@
 
 #include <assert.h>
 #include <iostream>
+#include <iterator>
 
 #include <set>
 
@@ -17,13 +18,18 @@
 #include "CommandlineOptions.hh"
 
 #include "Permutation.hh"
+#include "Matrix.hh"
+
 #include "TriangNode.hh"
 #include "Flip.hh"
 
 class Symmetry : public Permutation {
 public:
   inline Symmetry();
-  inline explicit Symmetry(const parameter_type& n);
+  inline explicit Symmetry(const parameter_type n);
+  // initialize by permutation of length p.k() on numbers up to p.n()
+  // interpreted as a cycle (cycle=true) or permutation:
+  Symmetry(const Permutation& p, const bool cycle=true);
   inline Symmetry(const Symmetry& s);
   inline ~Symmetry();
   inline Symmetry& operator=(const Symmetry& s);
@@ -42,13 +48,16 @@ public:
   const bool fixes(const TriangNode&) const;
   // concatenation:
   Symmetry operator* (const Symmetry& s) const;
+  // output transformation:
+  Matrix PermutationMatrix() const;
+  Matrix ReducedPermutationMatrix() const;
   // stream operations:
   friend std::istream&             operator>>(std::istream& ist, Symmetry& s);
 };
 
 inline Symmetry::Symmetry() : Permutation() {}
 
-inline Symmetry::Symmetry(const parameter_type& n) : Permutation(n,n) {}
+inline Symmetry::Symmetry(const parameter_type n) : Permutation(n,n) {}
 
 inline Symmetry::Symmetry(const Symmetry& s) : Permutation(s) { 
   assert(n() == k()); 
@@ -82,6 +91,14 @@ inline const IntegerSet Symmetry::operator()(const IntegerSet& is) const {
 typedef HashSet<Symmetry> symmetry_data;
 #else
 typedef std::set<Symmetry> symmetry_data;
+inline std::ostream& operator<<(std::ostream& ost, const symmetry_data& sd) {
+  for (symmetry_data::const_iterator iter = sd.begin();
+       iter != sd.end();
+       ++iter) {
+    ost << *iter << std::endl;
+  }
+  return ost;
+}
 #endif
 
 class SymmetryGroup : public symmetry_data {

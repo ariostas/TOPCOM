@@ -49,31 +49,28 @@ void PlacingTriang::_place() {
 #endif
   IntegerSet placed(start);
   IntegerSet not_placed(groundset - start);
-  SimplicialComplex current_facets;
-  current_facets.insert_boundary(start);
+  _bd_triang.insert_boundary(start);
   for (IntegerSet::const_iterator iter = not_placed.begin();
        iter != not_placed.end();
        ++iter) {
     if (CommandlineOptions::verbose() && (no > 50)) {
       std::cerr << "placing vertex " << *iter << " ..." << std::endl;
     }
-    _place(current_facets, not_placed, placed, *iter);
+    _place(placed, *iter);
     if (CommandlineOptions::verbose() && (no > 50)) {
       std::cerr << "... done." << std::endl;
     }
   }
 }
 
-void PlacingTriang::_place(SimplicialComplex& current_facets, 
-			   IntegerSet& not_placed, 
-			   IntegerSet& placed, 
+void PlacingTriang::_place(IntegerSet& placed, 
 			   const size_type i) {
 #ifdef SUPER_VERBOSE
   std::cerr << "current facets: " << current_facets << std::endl;
 #endif
   SimplicialComplex new_facets;
-  for (SimplicialComplex::const_iterator iter = current_facets.begin();
-       iter != current_facets.end();
+  for (SimplicialComplex::const_iterator iter = _bd_triang.begin();
+       iter != _bd_triang.end();
        ++iter) {
     const Simplex facet(*iter);
 #ifdef SUPER_VERBOSE
@@ -90,8 +87,7 @@ void PlacingTriang::_place(SimplicialComplex& current_facets,
       new_facets ^= new_bd;
     }
   }
-  current_facets ^= new_facets;
-  not_placed -= i;
+  _bd_triang ^= new_facets;
   placed += i;
 }
 

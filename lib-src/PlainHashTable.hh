@@ -23,8 +23,8 @@
 #define _RAND_SEED 19345
 #endif
 
-// the following prime list is taken from STL:
-const size_type __pht_no_of_primes = 33;
+// the following prime list is taken from STL, restricted to doubling:
+const size_type __pht_no_of_primes = 66;
 
 const size_type __pht_prime[__pht_no_of_primes] = {
   0UL,          3UL,          7UL,         13UL,        27UL,
@@ -33,7 +33,43 @@ const size_type __pht_prime[__pht_no_of_primes] = {
   49157UL,      98317UL,      196613UL,    393241UL,    786433UL,
   1572869UL,    3145739UL,    6291469UL,   12582917UL,  25165843UL,
   50331653UL,   100663319UL,  201326611UL, 402653189UL, 805306457UL, 
-  1610612741UL, 3221225473UL, 4294967291UL
+  1610612741UL, 3221225473UL, 4294967291UL,
+  // Trick taken from STL:
+  // Sentinel, so we don't have to test the result of lower_bound,
+  // or, on 64-bit machines, rest of the table.
+  sizeof(unsigned long) != 8 ? 4294967291ul : (unsigned long)6442450933ull,
+  (unsigned long)12884901857ull,
+  (unsigned long)25769803693ull,
+  (unsigned long)51539607367ull,
+  (unsigned long)103079215087ull,
+  (unsigned long)206158430123ull,
+  (unsigned long)412316860387ull,
+  (unsigned long)824633720731ull,
+  (unsigned long)1649267441579ull,
+  (unsigned long)3298534883309ull,
+  (unsigned long)6597069766607ull,
+  (unsigned long)13194139533241ull,
+  (unsigned long)26388279066581ull,
+  (unsigned long)52776558133177ull,
+  (unsigned long)105553116266399ull,
+  (unsigned long)211106232532861ull,
+  (unsigned long)562949953421231ull,
+  (unsigned long)1125899906842597ull,
+  (unsigned long)2251799813685119ull,
+  (unsigned long)4503599627370449ull,
+  (unsigned long)9007199254740881ull,
+  (unsigned long)18014398509481951ull,
+  (unsigned long)36028797018963913ull,
+  (unsigned long)72057594037927931ull,
+  (unsigned long)144115188075855859ull,
+  (unsigned long)288230376151711717ull,
+  (unsigned long)576460752303423433ull,
+  (unsigned long)1152921504606846883ull,
+  (unsigned long)2305843009213693951ull,
+  (unsigned long)4611686018427387847ull,
+  (unsigned long)9223372036854775783ull,
+  (unsigned long)18446744073709551557ull,
+  (unsigned long)18446744073709551557ull
 };
 
 template<class HashData>
@@ -81,8 +117,9 @@ private:
   static HashKeySize<key_type> _hashkeysize;
   static HashKey<key_type>     _hashkey;
 private:
-  enum {_init_prime = 0UL, _init_maxkey = 0UL, _maxloadfactor = 80UL,
-	_large_prime = 3221225473U, _small_prime = 1610612741UL,
+  enum {_init_prime = 0UL, _init_maxkey = 0UL, _maxloadfactor = 70UL,
+	_large_prime = sizeof(unsigned long) != 8 ? 3221225473U : 18446744073709551557ull,
+	_small_prime = 1610612741UL,
 	_rand_seed = _RAND_SEED };
 #ifdef WATCH_MAXCHAINLEN
 private:
@@ -350,7 +387,13 @@ void PlainHashTable<HashData>::_extend_randvec(const size_type new_maxkey) {
  
 template<class HashData>
 inline void PlainHashTable<HashData>::_expand() {
-  if (_current_prime < __pht_no_of_primes - 1) {
+  // if (_current_prime < __pht_no_of_primes - 1) {
+  //   _rehash(__pht_prime[++_current_prime]);
+  // }
+  if (__pht_prime[_current_prime] == __pht_prime[_current_prime+1]) {
+    return;
+  }
+  else {
     _rehash(__pht_prime[++_current_prime]);
   }
 }
@@ -409,10 +452,10 @@ template<class HashData>
 inline const size_type PlainHashTable<HashData>::_hash(const key_type& key) const {
   size_type res(0);
   for (size_type i = 0; i < _hashkeysize(key); ++i) {
-//     res = (res + ((_randvec[i] % _size) ^ _hashkey(key, i))) % _size;
-    res += _randvec[i] * _hashkey(key, i);
-//     res += _randvec[i] ^ _hashkey(key, i);
-//      res ^= _hashkey(key, i);
+    //    res = (res + ((_randvec[i] % _size) ^ _hashkey(key, i))) % _size;
+    //    res += _randvec[i] * _hashkey(key, i);
+    //    res += _randvec[i] ^ _hashkey(key, i);
+    res ^= _hashkey(key, i);
   }
   return res % _size;
 }

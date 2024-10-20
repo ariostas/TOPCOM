@@ -6,12 +6,15 @@
 #ifndef SYMMETRICBFS_HH
 #define SYMMETRICBFS_HH
 
+#include <iostream>
 #include <fstream>
 #include <string>
 
 #include <assert.h>
 #include <set>
 #include <map>
+#include <tr1/unordered_set>
+#include <tr1/unordered_map>
 
 #include "HashSet.hh"
 #include "SimplicialComplex.hh"
@@ -34,8 +37,11 @@ typedef HashMap<TriangNode, TriangFlips>      tnode_container_type; // Node->Fli
 typedef std::set<SimplicialComplex>            triang_container_type;
 typedef std::set<TriangNode>                   orbit_type;
 typedef std::map<TriangNode, TriangFlips>      tnode_container_type; // Node->Flips
+// typedef std::tr1::unordered_set<SimplicialComplex>            triang_container_type;
+// typedef std::tr1::unordered_set<TriangNode>                   orbit_type;
+// typedef std::tr1::unordered_map<TriangNode, TriangFlips>      tnode_container_type; // Node->Flips
 
-inline std::ostream& operator<<(ostream& ost, const tnode_container_type& tnc) {
+inline std::ostream& operator<<(std::ostream& ost, const tnode_container_type& tnc) {
   for (tnode_container_type::const_iterator iter = tnc.begin();
        iter != tnc.end();
        ++iter) {
@@ -43,6 +49,66 @@ inline std::ostream& operator<<(ostream& ost, const tnode_container_type& tnc) {
   }
   return ost;
 }
+
+inline std::istream& operator>>(std::istream& ist, tnode_container_type& tnc) {
+  char dash;
+  char arrow;
+
+  TriangNode tn_reader;
+  TriangFlips tf_reader;
+  
+  char c;
+
+  tnc.clear();
+  ist >> std::ws >> c;
+  if (c == '[') {
+    while (ist >> std::ws >> c) {
+      if (c == ']') {
+	break;
+      }
+      if (c == ',') {
+	continue;
+      }
+      ist.putback(c);
+      if (!(ist >> std::ws >> tn_reader)) {
+#ifdef READ_DEBUG
+	std::cerr << "std::istream& operator>>(std::istream&, tnode_container_type&): "
+		  << "key not found." << std::endl;
+#endif
+	ist.clear(std::ios::failbit);
+	return ist;
+      }
+      if (!(ist >> std::ws >> dash >> arrow)) {
+#ifdef READ_DEBUG
+	std::cerr << "std::istream& operator>>(std::istream&, chirotope_data&): "
+		  << "`->' not found." << std::endl;
+#endif
+	ist.clear(std::ios::failbit);
+	return ist;
+      }
+      if (!(ist >> std::ws >> tf_reader)) {
+#ifdef READ_DEBUG
+	std::cerr << "std::istream& operator>>(std::istream&, chirotope_data&): "
+		  << "data not found." << std::endl;
+#endif
+	ist.clear(std::ios::failbit);
+	return ist;
+      }
+      tnc[tn_reader] = tf_reader;
+    }
+  }
+  else {
+#ifdef READ_DEBUG
+    std::cerr << "std::istream& operator>>(std::istream&, tnode_container_type&): "
+	 << "missing `" << '[' << "'." << std::endl;
+#endif
+    ist.clear(std::ios::failbit);
+    return ist;
+  }
+  ist.clear(std::ios::goodbit);
+  return ist;
+}
+
 #endif
 
 #ifdef CHECK_NEW
@@ -59,7 +125,7 @@ class __sbfs_cout_triang : public __sbfs_cout_triang_base {
 public:
   inline virtual void operator()(const size_type no,
 				 const TriangNode& tn) const {
-    std::cout << "T[" << no << "]:=";
+    std::cout << "T[" << tn.ID() << "]:=";
     std::cout << tn << ";" << std::endl;
   }
 };
@@ -242,6 +308,8 @@ private:
   tnode_container_type::iterator  _find_iter;
   size_type                       _totalcount;
   size_type                       _symcount;
+  size_type                       _reportcount;
+  size_type                       _flipcount;
 private:
   triang_container_type           _all_triangs;
 private:
@@ -317,13 +385,14 @@ inline SymmetricBFS::SymmetricBFS(const parameter_type      no,
   _symmetries(symmetries), _node_symmetries(seed_symmetries),
   _previous_triangs(), _new_triangs(),
   _find_iter(_previous_triangs.begin()),
-  _totalcount(0), _symcount(0),
-  _representative(no, rank, seed), _transformation(_no),
+  _totalcount(0), _symcount(0), _flipcount(0), _reportcount(CommandlineOptions::report_frequency()),
+  _representative(_symcount, no, rank, seed), _transformation(_no),
   _orbitsize(0), _orbit(),
   _rep_has_search_pred(false),
   _print_triangs(print_triangs),
   _only_fine_triangs(only_fine_triangs),
-  _processed_count(0L), _dump_no(0) {
+  _processed_count(0L),
+  _dump_no(0) {
   
   IntegerSet seed_support(seed.support());
   if (_print_triangs) {
@@ -373,7 +442,7 @@ inline SymmetricBFS::SymmetricBFS(const parameter_type      no,
     }
   }
   else {
-    const TriangNode current_triang = TriangNode(no, rank, seed);
+    const TriangNode current_triang = TriangNode(_symcount, no, rank, seed);
     if (CommandlineOptions::simple()) {
       const TriangFlips current_flips;
       _old_symmetry_class(current_triang);
@@ -381,6 +450,7 @@ inline SymmetricBFS::SymmetricBFS(const parameter_type      no,
 	if ((*_output_pred_ptr)(points, chiro, current_triang)) {
 	  _totalcount += _orbitsize;
 	  ++_symcount;
+	  --_reportcount;
 	  (*_cout_triang_ptr)(_symcount, current_triang);
 	}
 	_all_triangs.insert(current_triang);
@@ -393,6 +463,7 @@ inline SymmetricBFS::SymmetricBFS(const parameter_type      no,
 	if ((*_output_pred_ptr)(points, chiro, current_triang)) {
 	  _totalcount += _orbitsize;
 	  ++_symcount;
+	  --_reportcount;
 	  (*_cout_triang_ptr)(_symcount, current_triang);
 	}
 	const TriangFlips current_flips = TriangFlips(*_chiroptr,
@@ -432,6 +503,7 @@ inline std::ostream& SymmetricBFS::write(std::ostream& ost) const {
   ost << "_new_triangs         " << _new_triangs << std::endl;
   ost << "_totalcount          " << _totalcount << std::endl;
   ost << "_symcount            " << _symcount << std::endl;
+  ost << "_reportcount         " << _reportcount << std::endl;
   ost << "SymmetricBFS dump end." << std::endl;
   return ost;
 }

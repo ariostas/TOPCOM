@@ -34,6 +34,7 @@ public:
   inline Facets(const parameter_type& no, const parameter_type& rank);
   inline Facets(const Facets&);
   Facets(const Cocircuits&);
+  Facets(const Chirotope&, const SimplicialComplex& bd_triang);
   // destructor:
   inline ~Facets();
   // accessors:

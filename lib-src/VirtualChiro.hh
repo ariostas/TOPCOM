@@ -63,7 +63,11 @@ public:
   inline const bool operator==(const VirtualChiro& chiro) const;
   inline const bool operator!=(const VirtualChiro& chiro) const;
   inline const int operator()(const basis_type& basis) const {
+#ifndef STL_CHIROTOPE
     if (!(_chiro.member(basis))) {
+#else
+    if (_chiro.find(basis) == _chiro.end()) {
+#endif
 #ifdef INDEX_CHECK
       assert(_pointsptr != 0);
 #endif
@@ -79,11 +83,11 @@ public:
 	  if (CommandlineOptions::chirocache() < _chiro.load() + 1) {
 	    _chiro.erase_random();
 	  }
-	  _chiro.insert(basis, result);
+	  _chiro[basis] = result;
 	}
       }
       else {
- 	_chiro.insert(basis, result);
+ 	_chiro[basis] = result;
       }
       return result;
     }

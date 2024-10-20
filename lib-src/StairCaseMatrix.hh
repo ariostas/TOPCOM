@@ -37,6 +37,15 @@ public:
   // iostream:
   std::ostream& pretty_print(std::ostream& ost);
   friend std::ostream& operator<<(std::ostream& ost, const StairCaseMatrix& matrix);
+private:
+  // internal elimination step:
+  void _eliminate(const size_type&, const size_type&, const size_type&);
+  // forbid in place operations if result is of type StairCaseMatrix:
+  inline StairCaseMatrix& add(const StairCaseMatrix&);
+  inline StairCaseMatrix& scale(const Field&);
+  inline StairCaseMatrix& stack(const StairCaseMatrix&);
+  inline StairCaseMatrix& swap_cols(const size_type, const size_type);
+  inline StairCaseMatrix& swap_rows(const size_type, const size_type);
 };
 
 inline StairCaseMatrix::StairCaseMatrix() : 
@@ -63,6 +72,32 @@ inline bool StairCaseMatrix::has_full_rank() const {
   else {
     return (!(*this)[coldim()-1].is_zero());
   }
+}
+
+// private in place operations (senseless in general; only for internal use):
+inline StairCaseMatrix& StairCaseMatrix::add(const StairCaseMatrix& matrix) {
+  Matrix::add(matrix);
+  return *this;
+}
+
+inline StairCaseMatrix& StairCaseMatrix::scale(const Field& scalar) {
+  Matrix::scale(scalar);
+  return *this;
+}
+
+inline StairCaseMatrix& StairCaseMatrix::stack(const StairCaseMatrix& matrix) {
+  Matrix::stack(matrix);
+  return *this;
+}
+
+inline StairCaseMatrix& StairCaseMatrix::swap_cols(const size_type j1, const size_type j2) {
+  Matrix::swap_cols(j1, j2);
+  return *this;
+}
+
+inline StairCaseMatrix& StairCaseMatrix::swap_rows(const size_type i1, const size_type i2) {
+  Matrix::swap_rows(i1, i2);
+  return *this;
 }
 
 #endif
