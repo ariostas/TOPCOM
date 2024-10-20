@@ -16,11 +16,11 @@ CDD_INCLUDES = include/cdd.h  include/cddmp.h  include/cddtypes.h  include/setop
 GMP_LIBS     = lib/libgmp.a
 CDD_LIBS     = lib/libcddgmp.a
 
-GMP_VERSION = 6.1.1
-GMP_COMPRESSFORMAT = bz2
-GMP_EXTRACTOPTIONS = --bzip2 -xvf
+GMP_VERSION = 6.2.1
+GMP_COMPRESSFORMAT = lz
+GMP_EXTRACTOPTIONS = --lzip -xvf
 
-CDD_VERSION = 0.94f-TOPCOM
+CDD_VERSION = 0.94jGMP
 CDD_COMPRESSFORMAT = gz
 CDD_EXTRACTOPTIONS = -xzvf
 
