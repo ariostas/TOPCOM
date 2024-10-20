@@ -25,7 +25,7 @@ GMP_VERSION = 6.2.1
 GMP_COMPRESSFORMAT = bz2
 GMP_EXTRACTOPTIONS = -xvjf
 
-CDD_VERSION = 0.94j-TOPCOM
+CDD_VERSION = 0.94j-TOPCOMb
 CDD_COMPRESSFORMAT = gz
 CDD_EXTRACTOPTIONS = -xzvf
 
@@ -45,6 +45,9 @@ GMP_DIR      = $(GMP_NAME)-$(GMP_VERSION)
 CDD_DIR      = $(CDD_NAME)-$(CDD_VERSION)
 QSO_DIR      = $(QSO_NAME)-$(QSO_VERSION)
 
+CPPFLAGS    += -I`pwd`/../include
+LDFLAGS     += -L`pwd`/../lib
+
 all: gmp cdd qso
 
 gmp: $(GMP_DONE)
@@ -57,7 +60,7 @@ $(GMP_DONE): $(GMP_DIR)
 	@echo ==============================================================================
 	@echo making gmp ...
 	@echo ==============================================================================
-	$(SH) -c 'cd $(GMP_DIR); ./configure CFLAGS="-std=c11 -O3 -g -pthread" --prefix=`pwd`/.. --libdir=`pwd`/../lib --enable-cxx --with-pic'
+	$(SH) -c 'cd $(GMP_DIR); ./configure CFLAGS="-std=c11 -O3 -g -pthread" CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)" --prefix=`pwd`/.. --libdir=`pwd`/../lib --enable-cxx --with-pic'
 	make -C $(GMP_DIR)
 	make -C $(GMP_DIR) check
 	make -C $(GMP_DIR) install
@@ -74,7 +77,8 @@ $(CDD_DONE): $(CDD_DIR)
 	@echo ==============================================================================
 	@echo making cdd ...
 	@echo ==============================================================================
-	$(SH) -c 'cd $(CDD_DIR); ./configure CC=${CXX} CFLAGS="-std=c++11 -O3 -g -pthread" CPPFLAGS=-I`pwd`/../include LDFLAGS=-L`pwd`/../lib --prefix=`pwd`/.. --libdir=`pwd`/../lib '
+	@echo LDFLAGS is $(LDFLAGS)
+	$(SH) -c 'cd $(CDD_DIR); ./configure CC=${CXX} CFLAGS="-std=c++11 -O3 -g -pthread" CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)" --prefix=`pwd`/.. --libdir=`pwd`/../lib '
 	make -C $(CDD_DIR)
 	make -C $(CDD_DIR) install
 	@echo ==============================================================================
@@ -86,7 +90,7 @@ $(QSO_DONE): $(QSO_DIR)
 	@echo ==============================================================================
 	@echo making qsopt_ex ...
 	@echo ==============================================================================
-	$(SH) -c 'cd $(QSO_DIR); ./configure CFLAGS="-O3 -g -pthread" CPPFLAGS="-DVERBOSE_LEVEL=100 -I`pwd`/../include" LDFLAGS=-L`pwd`/../lib --prefix=`pwd`/.. --libdir=`pwd`/../lib '
+	$(SH) -c 'cd $(QSO_DIR); ./configure CFLAGS="-O3 -g -pthread" CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)" --prefix=`pwd`/.. --libdir=`pwd`/../lib '
 	$(SH) -c 'cd $(QSO_DIR); make; make install'
 	@echo ==============================================================================
 	@echo ... done making qsopt_ex.
