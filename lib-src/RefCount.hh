@@ -74,8 +74,8 @@ public:
   inline ~SmartPtr();
   // assignment:
   inline SmartPtr& operator=(const SmartPtr&);
-  // static nullptr:
-  inline static SmartPtr& nullptr();
+  // static nullpointer:
+  inline static SmartPtr& smartnullptr();
   // casts:
   inline operator bool() const;
   // accessors:
@@ -176,11 +176,11 @@ inline const refcount_type SmartPtr<T>::refcount() const {
   return _ptr->refcount();
 }
 
-// static nullptr:
+// static nullpointer:
 template <class T>
-inline SmartPtr<T>& SmartPtr<T>::nullptr() {
-  static SmartPtr<T> nullptr;
-  return nullptr;
+inline SmartPtr<T>& SmartPtr<T>::smartnullptr() {
+  static SmartPtr<T> smartnullptr;
+  return smartnullptr;
 }
 
 // operators:

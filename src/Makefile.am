@@ -1,5 +1,4 @@
 bin_PROGRAMS = \
-bench \
 B_A \
 B_A_center \
 B_D \
@@ -91,12 +90,12 @@ LDADD           = ../lib-src/libTOPCOM.a \
                   ../external/lib/libgmpxx.a \
                   ../external/lib/libgmp.a
 
-INCLUDES        = -I../lib-src
-INCLUDES       += -I../lib-src-reg
-INCLUDES       += -I../wrap-gmp-gmpxx
-INCLUDES       += -I../external/include
-INCLUDES       += -I$(includedir)
+AM_CPPFLAGS     = -I../lib-src
+AM_CPPFLAGS    += -I../lib-src-reg
+AM_CPPFLAGS    += -I../wrap-gmp-gmpxx
+AM_CPPFLAGS    += -I../external/include
+AM_CPPFLAGS    += -I$(includedir)
 
-AM_CPPFLAGS     = -DVERBOSE -DGMPRATIONAL -ftemplate-depth-30
+AM_CPPFLAGS    += -DVERBOSE -DGMPRATIONAL -ftemplate-depth-30
 
 AM_CXXFLAGS     = -O2

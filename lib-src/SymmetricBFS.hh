@@ -13,8 +13,8 @@
 #include <assert.h>
 #include <set>
 #include <map>
-#include <tr1/unordered_set>
-#include <tr1/unordered_map>
+// #include <unordered_set>
+// #include <unordered_map>
 
 #include "HashSet.hh"
 #include "SimplicialComplex.hh"

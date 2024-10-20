@@ -32,17 +32,16 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-bin_PROGRAMS = bench$(EXEEXT) B_A$(EXEEXT) B_A_center$(EXEEXT) \
-	B_D$(EXEEXT) chiro2allfinetriangs$(EXEEXT) \
-	chiro2alltriangs$(EXEEXT) chiro2circuits$(EXEEXT) \
-	chiro2cocircuits$(EXEEXT) chiro2dual$(EXEEXT) \
-	chiro2finetriang$(EXEEXT) chiro2finetriangs$(EXEEXT) \
-	chiro2mintriang$(EXEEXT) chiro2nallfinetriangs$(EXEEXT) \
-	chiro2nalltriangs$(EXEEXT) chiro2nfinetriangs$(EXEEXT) \
-	chiro2ntriangs$(EXEEXT) chiro2placingtriang$(EXEEXT) \
-	chiro2triangs$(EXEEXT) cocircuits2facets$(EXEEXT) \
-	cross$(EXEEXT) cube$(EXEEXT) cyclic$(EXEEXT) \
-	hypersimplex$(EXEEXT) lattice$(EXEEXT) \
+bin_PROGRAMS = B_A$(EXEEXT) B_A_center$(EXEEXT) B_D$(EXEEXT) \
+	chiro2allfinetriangs$(EXEEXT) chiro2alltriangs$(EXEEXT) \
+	chiro2circuits$(EXEEXT) chiro2cocircuits$(EXEEXT) \
+	chiro2dual$(EXEEXT) chiro2finetriang$(EXEEXT) \
+	chiro2finetriangs$(EXEEXT) chiro2mintriang$(EXEEXT) \
+	chiro2nallfinetriangs$(EXEEXT) chiro2nalltriangs$(EXEEXT) \
+	chiro2nfinetriangs$(EXEEXT) chiro2ntriangs$(EXEEXT) \
+	chiro2placingtriang$(EXEEXT) chiro2triangs$(EXEEXT) \
+	cocircuits2facets$(EXEEXT) cross$(EXEEXT) cube$(EXEEXT) \
+	cyclic$(EXEEXT) hypersimplex$(EXEEXT) lattice$(EXEEXT) \
 	points2allfinetriangs$(EXEEXT) points2alltriangs$(EXEEXT) \
 	points2chiro$(EXEEXT) points2facets$(EXEEXT) \
 	points2finetriang$(EXEEXT) points2finetriangs$(EXEEXT) \
@@ -55,7 +54,7 @@ bin_PROGRAMS = bench$(EXEEXT) B_A$(EXEEXT) B_A_center$(EXEEXT) \
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.in
+am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -81,12 +80,6 @@ B_D_LDADD = $(LDADD)
 B_D_DEPENDENCIES = ../lib-src/libTOPCOM.a ../lib-src-reg/libCHECKREG.a \
 	../external/lib/libcddgmp.a ../external/lib/libgmpxx.a \
 	../external/lib/libgmp.a
-am_bench_OBJECTS = bench.$(OBJEXT)
-bench_OBJECTS = $(am_bench_OBJECTS)
-bench_LDADD = $(LDADD)
-bench_DEPENDENCIES = ../lib-src/libTOPCOM.a \
-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
-	../external/lib/libgmpxx.a ../external/lib/libgmp.a
 am_chiro2allfinetriangs_OBJECTS = chiro2allfinetriangs.$(OBJEXT)
 chiro2allfinetriangs_OBJECTS = $(am_chiro2allfinetriangs_OBJECTS)
 chiro2allfinetriangs_LDADD = $(LDADD)
@@ -325,16 +318,15 @@ CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
 SOURCES = $(B_A_SOURCES) $(B_A_center_SOURCES) $(B_D_SOURCES) \
-	$(bench_SOURCES) $(chiro2allfinetriangs_SOURCES) \
-	$(chiro2alltriangs_SOURCES) $(chiro2circuits_SOURCES) \
-	$(chiro2cocircuits_SOURCES) $(chiro2dual_SOURCES) \
-	$(chiro2finetriang_SOURCES) $(chiro2finetriangs_SOURCES) \
-	$(chiro2mintriang_SOURCES) $(chiro2nallfinetriangs_SOURCES) \
-	$(chiro2nalltriangs_SOURCES) $(chiro2nfinetriangs_SOURCES) \
-	$(chiro2ntriangs_SOURCES) $(chiro2placingtriang_SOURCES) \
-	$(chiro2triangs_SOURCES) $(cocircuits2facets_SOURCES) \
-	$(cross_SOURCES) $(cube_SOURCES) $(cyclic_SOURCES) \
-	$(hypersimplex_SOURCES) $(lattice_SOURCES) \
+	$(chiro2allfinetriangs_SOURCES) $(chiro2alltriangs_SOURCES) \
+	$(chiro2circuits_SOURCES) $(chiro2cocircuits_SOURCES) \
+	$(chiro2dual_SOURCES) $(chiro2finetriang_SOURCES) \
+	$(chiro2finetriangs_SOURCES) $(chiro2mintriang_SOURCES) \
+	$(chiro2nallfinetriangs_SOURCES) $(chiro2nalltriangs_SOURCES) \
+	$(chiro2nfinetriangs_SOURCES) $(chiro2ntriangs_SOURCES) \
+	$(chiro2placingtriang_SOURCES) $(chiro2triangs_SOURCES) \
+	$(cocircuits2facets_SOURCES) $(cross_SOURCES) $(cube_SOURCES) \
+	$(cyclic_SOURCES) $(hypersimplex_SOURCES) $(lattice_SOURCES) \
 	$(points2allfinetriangs_SOURCES) $(points2alltriangs_SOURCES) \
 	$(points2chiro_SOURCES) $(points2facets_SOURCES) \
 	$(points2finetriang_SOURCES) $(points2finetriangs_SOURCES) \
@@ -345,16 +337,15 @@ SOURCES = $(B_A_SOURCES) $(B_A_center_SOURCES) $(B_D_SOURCES) \
 	$(points2volume_SOURCES) $(santos_22_triang_SOURCES) \
 	$(santos_dim4_triang_SOURCES) $(santos_triang_SOURCES)
 DIST_SOURCES = $(B_A_SOURCES) $(B_A_center_SOURCES) $(B_D_SOURCES) \
-	$(bench_SOURCES) $(chiro2allfinetriangs_SOURCES) \
-	$(chiro2alltriangs_SOURCES) $(chiro2circuits_SOURCES) \
-	$(chiro2cocircuits_SOURCES) $(chiro2dual_SOURCES) \
-	$(chiro2finetriang_SOURCES) $(chiro2finetriangs_SOURCES) \
-	$(chiro2mintriang_SOURCES) $(chiro2nallfinetriangs_SOURCES) \
-	$(chiro2nalltriangs_SOURCES) $(chiro2nfinetriangs_SOURCES) \
-	$(chiro2ntriangs_SOURCES) $(chiro2placingtriang_SOURCES) \
-	$(chiro2triangs_SOURCES) $(cocircuits2facets_SOURCES) \
-	$(cross_SOURCES) $(cube_SOURCES) $(cyclic_SOURCES) \
-	$(hypersimplex_SOURCES) $(lattice_SOURCES) \
+	$(chiro2allfinetriangs_SOURCES) $(chiro2alltriangs_SOURCES) \
+	$(chiro2circuits_SOURCES) $(chiro2cocircuits_SOURCES) \
+	$(chiro2dual_SOURCES) $(chiro2finetriang_SOURCES) \
+	$(chiro2finetriangs_SOURCES) $(chiro2mintriang_SOURCES) \
+	$(chiro2nallfinetriangs_SOURCES) $(chiro2nalltriangs_SOURCES) \
+	$(chiro2nfinetriangs_SOURCES) $(chiro2ntriangs_SOURCES) \
+	$(chiro2placingtriang_SOURCES) $(chiro2triangs_SOURCES) \
+	$(cocircuits2facets_SOURCES) $(cross_SOURCES) $(cube_SOURCES) \
+	$(cyclic_SOURCES) $(hypersimplex_SOURCES) $(lattice_SOURCES) \
 	$(points2allfinetriangs_SOURCES) $(points2alltriangs_SOURCES) \
 	$(points2chiro_SOURCES) $(points2facets_SOURCES) \
 	$(points2finetriang_SOURCES) $(points2finetriangs_SOURCES) \
@@ -506,9 +497,9 @@ LDADD = ../lib-src/libTOPCOM.a \
                   ../external/lib/libgmpxx.a \
                   ../external/lib/libgmp.a
 
-INCLUDES = -I../lib-src -I../lib-src-reg -I../wrap-gmp-gmpxx \
-	-I../external/include -I$(includedir)
-AM_CPPFLAGS = -DVERBOSE -DGMPRATIONAL -ftemplate-depth-30
+AM_CPPFLAGS = -I../lib-src -I../lib-src-reg -I../wrap-gmp-gmpxx \
+	-I../external/include -I$(includedir) -DVERBOSE -DGMPRATIONAL \
+	-ftemplate-depth-30
 AM_CXXFLAGS = -O2
 all: all-am
 
@@ -590,9 +581,6 @@ B_A_center$(EXEEXT): $(B_A_center_OBJECTS) $(B_A_center_DEPENDENCIES)
 B_D$(EXEEXT): $(B_D_OBJECTS) $(B_D_DEPENDENCIES) 
 	@rm -f B_D$(EXEEXT)
 	$(CXXLINK) $(B_D_OBJECTS) $(B_D_LDADD) $(LIBS)
-bench$(EXEEXT): $(bench_OBJECTS) $(bench_DEPENDENCIES) 
-	@rm -f bench$(EXEEXT)
-	$(CXXLINK) $(bench_OBJECTS) $(bench_LDADD) $(LIBS)
 chiro2allfinetriangs$(EXEEXT): $(chiro2allfinetriangs_OBJECTS) $(chiro2allfinetriangs_DEPENDENCIES) 
 	@rm -f chiro2allfinetriangs$(EXEEXT)
 	$(CXXLINK) $(chiro2allfinetriangs_OBJECTS) $(chiro2allfinetriangs_LDADD) $(LIBS)
@@ -717,7 +705,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/B_A.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/B_A_center.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/B_D.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bench.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/chiro2allfinetriangs.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/chiro2alltriangs.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/chiro2circuits.Po@am__quote@

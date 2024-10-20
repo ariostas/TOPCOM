@@ -144,6 +144,10 @@ bool LPinterface::has_interior_point() {
     }
     return false;
   }
+  if (CommandlineOptions::debug()) {
+    std::cerr << "WARNING: unspecified case. I assume that no interior point exists." << std::endl;
+  }
+  return false;
 }
 
 // eof LPinterface.cc

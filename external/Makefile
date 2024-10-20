@@ -43,7 +43,7 @@ $(GMP_DONE): $(GMP_DIR)
 	@echo ==============================================================================
 	@echo making gmp ...
 	@echo ==============================================================================
-	$(SH) -c 'cd $(GMP_DIR); ./configure --prefix=`pwd`/.. --enable-cxx'
+	$(SH) -c 'cd $(GMP_DIR); ./configure --prefix=`pwd`/.. --libdir=`pwd`/../lib --enable-cxx'
 	make -C $(GMP_DIR)
 	make -C $(GMP_DIR) check
 	make -C $(GMP_DIR) install
@@ -60,7 +60,7 @@ $(CDD_DONE): $(CDD_DIR)
 	@echo ==============================================================================
 	@echo making cdd ...
 	@echo ==============================================================================
-	$(SH) -c 'cd $(CDD_DIR); ./configure --prefix=`pwd`/..'
+	$(SH) -c 'cd $(CDD_DIR); ./configure --prefix=`pwd`/.. --libdir=`pwd`/../lib '
 	make -C $(CDD_DIR)
 	make -C $(CDD_DIR) install
 	@echo ==============================================================================

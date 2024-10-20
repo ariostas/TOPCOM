@@ -2,5 +2,7 @@ include_HEADERS = \
 Integer.h \
 Rational.h
 
-INCLUDES        = -I../external/include
-INCLUDES       += -I$(includedir)
+AM_CPPFLAGS        = -I../external/include
+AM_CPPFLAGS       += -I$(includedir)
+
+AM_CXXFLAGS     = -O2

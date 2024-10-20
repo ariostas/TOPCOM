@@ -37,7 +37,7 @@ subdir = lib-src-reg
 DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.in
+am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -190,9 +190,8 @@ SPXinterface.hh \
 RegularityCheck.hh \
 LPinterface.hh
 
-INCLUDES = -I../lib-src -I../wrap-gmp-gmpxx -I../external/include \
-	-I$(includedir)
-AM_CPPFLAGS = -DVERBOSE -DGMPRATIONAL -ftemplate-depth-30
+AM_CPPFLAGS = -I../lib-src -I../wrap-gmp-gmpxx -I../external/include \
+	-I$(includedir) -DVERBOSE -DGMPRATIONAL -ftemplate-depth-30
 AM_CXXFLAGS = -O2
 all: all-am
 

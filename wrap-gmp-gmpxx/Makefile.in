@@ -36,7 +36,7 @@ subdir = wrap-gmp-gmpxx
 DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.in
+am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -165,7 +165,8 @@ include_HEADERS = \
 Integer.h \
 Rational.h
 
-INCLUDES = -I../external/include -I$(includedir)
+AM_CPPFLAGS = -I../external/include -I$(includedir)
+AM_CXXFLAGS = -O2
 all: all-am
 
 .SUFFIXES:

@@ -58,7 +58,7 @@ __sc_const_iterator<T> __sc_const_iterator<T>::operator=(const __sc_const_iterat
   }
   if (iter._current_indexset_iter) {
     _current_indexset_iter = iter_allocator.allocate(1);
-    std::_Construct(_current_indexset_iter, *iter._current_indexset_iter);
+    iter_allocator.construct(_current_indexset_iter, *iter._current_indexset_iter);
   }
   else {
     _current_card = _container->_maxcard;

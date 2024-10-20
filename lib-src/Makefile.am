@@ -88,11 +88,11 @@ VertexFacetTable.hh \
 VertexFacetTableArray.hh \
 VirtualChiro.hh
 
-INCLUDES        = -I../lib-src-reg
-INCLUDES       += -I../wrap-gmp-gmpxx
-INCLUDES       += -I../external/include
-INCLUDES       += -I$(includedir)
+AM_CPPFLAGS     = -I../lib-src-reg
+AM_CPPFLAGS    += -I../wrap-gmp-gmpxx
+AM_CPPFLAGS    += -I../external/include
+AM_CPPFLAGS    += -I$(includedir)
 
-AM_CPPFLAGS     = -DVERBOSE -DGMPRATIONAL -ftemplate-depth-35
+AM_CPPFLAGS    += -DVERBOSE -DGMPRATIONAL -ftemplate-depth-35
 
 AM_CXXFLAGS     = -O2 -g

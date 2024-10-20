@@ -1,3 +1,15 @@
+version 0.17.5: renamed the static "nullptr()" method for SmartPtr<T>
+	to "smartnullptr()" because the standard literal "nullptr" is
+	implemented as a macro in gcc-4.2.1 such that the declaration of
+	"nullptr()" in class SmartPtr<T> gets corrupted
+	forced "$libdir" in "external" to "lib" in order to avoid problems
+	with autoconf installations that use lib64 on 64-bit systems and 
+	multi-binary systems (no harm here because the installation of
+	externals is done only local inside the TOPCOM build tree)
+	removed usage of unordered_set/map altogether because of differing
+	include paths of different compilers
+	for that same reason, the profiling tool "bench" was removed from
+	the distribution 
 version 0.17.4: gmpxx.h is now overloaded by a version that canonicalizes
 	all rational input data right away
 version 0.17.3: updated to gmp-5.0.5
