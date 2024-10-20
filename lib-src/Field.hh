@@ -17,15 +17,15 @@ static const Field ZERO     = Field(0);
 static const Field ONE      = Field(1);
 static const Field MINUSONE = Field(-1);
 
-inline const Field sign(const Field& f) { 
-  if (f == 0) { 
-    return ZERO; 
+inline const int sign(const Field& f) { 
+  if (f == ZERO) { 
+    return 0; 
   }
   else if (f > ZERO) {
-    return ONE;
+    return 1;
   }
   else {
-    return MINUSONE;
+    return -1;
   }
 }
 

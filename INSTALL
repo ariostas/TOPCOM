@@ -1,3 +1,16 @@
+Remark concerning consistent 32 resp. 64 bit compilation
+========================================================
+
+The easiest way to guarantee consistent compilation is
+to configure with explicit setting of CFLAGS and CXXFLAGS
+to "-m32" or "-m64".  This can be achieved by calling
+
+  ./configure [other-configure-options-see-below] CFLAGS="-m64" CXXFLAGS="-m64"
+
+This way, all C/C++-Compilations are carried out with
+the corresponding compiler flag.
+
+
 Remark concerning external packages gmp and cdd
 ===============================================
 

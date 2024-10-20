@@ -20,8 +20,8 @@ CDD_TAR      = $(CDD_NAME)-$(CDD_VERSION).tar.gz
 GMP_DIR      = $(GMP_NAME)-$(GMP_VERSION)
 CDD_DIR      = $(CDD_NAME)-$(CDD_VERSION)
 
-GMP_VERSION = 4.2.1
-CDD_VERSION = 0.94b
+GMP_VERSION = 4.3.0
+CDD_VERSION = 0.94f-TOPCOM
 
 GMP_DIR = $(GMP_NAME)-$(GMP_VERSION)
 CDD_DIR = $(CDD_NAME)-$(CDD_VERSION)
@@ -36,9 +36,10 @@ $(GMP_DONE): $(GMP_DIR)
 	@echo ==============================================================================
 	@echo making gmp ...
 	@echo ==============================================================================
-	csh -c 'cd $(GMP_DIR); ./configure --prefix=`pwd`/..'
+	csh -c 'cd $(GMP_DIR); ./configure --prefix=`pwd`/.. --enable-cxx'
 	make -C $(GMP_DIR)
-	make -C $(GMP_DIR) install	
+	make -C $(GMP_DIR) check
+	make -C $(GMP_DIR) install
 	@echo ==============================================================================
 	@echo ... done making gmp.
 	@echo ==============================================================================

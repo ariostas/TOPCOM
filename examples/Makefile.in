@@ -175,8 +175,6 @@ cube_2_doublecover.dat \
 cube_2_dual.dat \
 cube_3.chiro \
 cube_3.dat \
-cube_3.dump.0 \
-cube_3.dump.1 \
 cube_3_checkreg.dat \
 cube_3_doublecover.dat \
 cube_3_dual.dat \
@@ -216,8 +214,6 @@ lattice_4_4.result \
 lattice_4_5.dat \
 lattice_5_5.dat \
 lattice_checkreg.dat \
-log_cyclic_8_4.read.out \
-moae.chiro_computationtree \
 moae.dat \
 moae_checkreg.dat \
 moae_heights.res \

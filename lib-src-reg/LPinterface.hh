@@ -23,7 +23,7 @@
   
 inline void dd_set_R(mytype& a, const Rational& b) {
   //  mpq_init(a);
-  mpq_set(a, b.get_rep());
+  mpq_set(a, b.get_mpq_t());
 }
 
 #elif defined GMPFLOAT // GMP float
@@ -77,7 +77,7 @@ inline LPinterface::~LPinterface() {
   dd_FreeLPSolution(_solptr);
   dd_FreeLPData    (_lpptr);
   dd_FreeMatrix    (_matrixptr);
-  dd_clear_global_constants();
+  dd_free_global_constants();
 }
 
 #endif

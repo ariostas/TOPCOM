@@ -2024,7 +2024,7 @@ fi
 
 # Define the identity of the package.
  PACKAGE=TOPCOM
- VERSION=0.15.4
+ VERSION=0.16.2
 
 
 cat >>confdefs.h <<_ACEOF
@@ -4656,7 +4656,7 @@ fi
 
 
 
-ac_config_files="$ac_config_files wrap-gmp-gcc4/Makefile lib-src/Makefile lib-src-reg/Makefile src/Makefile src-reg/Makefile examples/Makefile Makefile"
+ac_config_files="$ac_config_files wrap-gmp-gmpxx/Makefile lib-src/Makefile lib-src-reg/Makefile src/Makefile src-reg/Makefile examples/Makefile Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -5258,7 +5258,7 @@ for ac_config_target in $ac_config_targets
 do
   case $ac_config_target in
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
-    "wrap-gmp-gcc4/Makefile") CONFIG_FILES="$CONFIG_FILES wrap-gmp-gcc4/Makefile" ;;
+    "wrap-gmp-gmpxx/Makefile") CONFIG_FILES="$CONFIG_FILES wrap-gmp-gmpxx/Makefile" ;;
     "lib-src/Makefile") CONFIG_FILES="$CONFIG_FILES lib-src/Makefile" ;;
     "lib-src-reg/Makefile") CONFIG_FILES="$CONFIG_FILES lib-src-reg/Makefile" ;;
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;

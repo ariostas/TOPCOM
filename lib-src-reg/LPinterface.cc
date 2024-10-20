@@ -88,26 +88,30 @@ bool LPinterface::has_interior_point() {
       for (dd_rowrange j = 0; j < (_solptr->d) - 3; j++) {
 	const Field x_j = Field(_solptr->sol[j+1]);
 	if (_support.contains(j)) {
-	  std::cout << double(x_j);
+	  //	  std::cout << double(x_j);
+	  std::cout << x_j.get_d();
 	}
 	else {
 	  if (CommandlineOptions::debug()) {
 	    std::cerr << "point " << j << " unused, assigning height " << maxheight + 1 << std::endl;
 	  }
-	  std::cout << double(maxheight) + 1;
+	  //	  std::cout << double(maxheight) + 1;
+	  std::cout << maxheight.get_d() + 1;
 	}
 	std::cout << ",";
       }
       const long j((_solptr->d) - 3);
       const Field x_j = Field(_solptr->sol[j+1]);
       if (_support.contains(j)) {
-	std::cout << double(x_j);
+	//	std::cout << double(x_j);
+	std::cout << x_j.get_d();
       }
       else {
 	if (CommandlineOptions::debug()) {
 	  std::cerr << "point " << j << " unused, assigning height " << maxheight + 1 << std::endl;
 	}
-	std::cout << double(maxheight) + 1;
+	//	std::cout << double(maxheight) + 1;
+	std::cout << maxheight.get_d() + 1;
       }
       std::cout << ")" << std::endl;
       if (CommandlineOptions::debug()) {

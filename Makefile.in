@@ -156,9 +156,9 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-SUBDIRS = wrap-gmp-gcc4 lib-src-reg lib-src src-reg src examples
-EXTRA_DIST = external/Makefile external/gmp-4.2.1.tar.gz \
-	external/cddlib-0.94b.tar.gz
+SUBDIRS = wrap-gmp-gmpxx lib-src-reg lib-src src-reg src examples
+EXTRA_DIST = external/Makefile external/gmp-4.3.0.tar.gz \
+	external/cddlib-0.94f-TOPCOM.tar.gz
 all: all-recursive
 
 .SUFFIXES:

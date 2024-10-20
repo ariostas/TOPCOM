@@ -77,13 +77,13 @@ santos_22_triang_SOURCES           = santos_22_triang.cc
 
 LDADD           = ../lib-src/libTOPCOM.a \
                   ../lib-src-reg/libCHECKREG.a \
-                  ../wrap-gmp-gcc4/libwrapgmp-gcc4.a \
                   ../external/lib/libcddgmp.a \
+                  ../external/lib/libgmpxx.a \
                   ../external/lib/libgmp.a
 
 INCLUDES        = -I../lib-src
 INCLUDES       += -I../lib-src-reg
-INCLUDES       += -I../wrap-gmp-gcc4
+INCLUDES       += -I../wrap-gmp-gmpxx
 INCLUDES       += -I../external/include
 INCLUDES       += -I$(includedir)
 

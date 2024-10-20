@@ -89,7 +89,7 @@ VertexFacetTableArray.hh \
 VirtualChiro.hh
 
 INCLUDES        = -I../lib-src-reg
-INCLUDES       += -I../wrap-gmp-gcc4
+INCLUDES       += -I../wrap-gmp-gmpxx
 INCLUDES       += -I../external/include
 INCLUDES       += -I$(includedir)
 
