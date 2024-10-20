@@ -109,12 +109,13 @@ inline PointConfiguration::PointConfiguration(const Matrix& matrix) :
 
 inline std::istream& PointConfiguration::read(std::istream& ist) {
   Matrix::read(ist);
-  for (size_type i = 0; i < maxindex(); ++i) {
+  this->canonicalize();
+  for (size_type i = 0; i < this->maxindex(); ++i) {
     if ((*this)[i].is_zero()) {
 #ifdef READ_DEBUG
       std::cerr << "PointConfiguration::read(std::istream& ist): "
-	   << "[0, ..., 0] not allowed."
-	   << std::endl;
+		<< "[0, ..., 0] not allowed."
+		<< std::endl;
 #endif
       ist.setstate(std::ios::failbit);
       return ist;

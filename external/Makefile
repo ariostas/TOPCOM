@@ -16,17 +16,22 @@ CDD_INCLUDES = include/cdd.h  include/cddmp.h  include/cddtypes.h  include/setop
 GMP_LIBS     = lib/libgmp.a
 CDD_LIBS     = lib/libcddgmp.a
 
-GMP_TAR      = $(GMP_NAME)-$(GMP_VERSION).tar.gz
-CDD_TAR      = $(CDD_NAME)-$(CDD_VERSION).tar.gz
+GMP_VERSION = 5.0.5
+GMP_COMPRESSFORMAT = bz2
+GMP_EXTRACTOPTIONS = --bzip2 -xvf
 
-GMP_DIR      = $(GMP_NAME)-$(GMP_VERSION)
-CDD_DIR      = $(CDD_NAME)-$(CDD_VERSION)
-
-GMP_VERSION = 4.3.0
 CDD_VERSION = 0.94f-TOPCOM
+CDD_COMPRESSFORMAT = gz
+CDD_EXTRACTOPTIONS = -xzvf
 
 GMP_DIR = $(GMP_NAME)-$(GMP_VERSION)
 CDD_DIR = $(CDD_NAME)-$(CDD_VERSION)
+
+GMP_TAR      = $(GMP_NAME)-$(GMP_VERSION).tar.$(GMP_COMPRESSFORMAT)
+CDD_TAR      = $(CDD_NAME)-$(CDD_VERSION).tar.$(CDD_COMPRESSFORMAT)
+
+GMP_DIR      = $(GMP_NAME)-$(GMP_VERSION)
+CDD_DIR      = $(CDD_NAME)-$(CDD_VERSION)
 
 all: gmp cdd
 
@@ -42,6 +47,10 @@ $(GMP_DONE): $(GMP_DIR)
 	make -C $(GMP_DIR)
 	make -C $(GMP_DIR) check
 	make -C $(GMP_DIR) install
+	@echo ==============================================================================
+	@echo installing patched wrapper:
+	@echo ==============================================================================
+	$(SH) -c 'cp gmpxx-patch/gmpxx.h include/'
 	@echo ==============================================================================
 	@echo ... done making gmp.
 	@echo ==============================================================================
@@ -63,7 +72,7 @@ $(GMP_DIR): $(GMP_TAR)
 	@echo ==============================================================================
 	@echo unpacking gmp ...
 	@echo ==============================================================================
-	tar xzvf $(GMP_TAR)
+	tar $(GMP_EXTRACTOPTIONS) $(GMP_TAR)
 	@echo ==============================================================================
 	@echo ... done unpacking gmp.
 	@echo ==============================================================================
@@ -72,7 +81,7 @@ $(CDD_DIR): $(CDD_TAR)
 	@echo ==============================================================================
 	@echo unpacking cdd ...
 	@echo ==============================================================================
-	tar xzvf $(CDD_TAR)
+	tar $(CDD_EXTRACTOPTIONS) $(CDD_TAR)
 	@echo ==============================================================================
 	@echo ... done unpacking cdd.
 	@echo ==============================================================================

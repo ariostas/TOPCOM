@@ -1,3 +1,12 @@
+version 0.17.4: gmpxx.h is now overloaded by a version that canonicalizes
+	all rational input data right away
+version 0.17.3: updated to gmp-5.0.5
+	since "0/5 != 0" in mpq_class (gmp), 
+	introduced a special "is_zero" test for Rationals
+	that only uses the numerator
+version 0.17.2: correction of a syntax issue with gcc 4.7
+	update of the address of the FSF in COPYING and README
+	(thanks to the Fedora team for the report!)
 version 0.17.1: correction of read from input stream in Facets.hh
 	ID for triangulations allowing for an option to output flip edges
 version 0.17.0: new function to construct Birkhoff subpolytopes

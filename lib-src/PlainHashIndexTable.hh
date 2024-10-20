@@ -52,13 +52,13 @@ public:
 	   << "index out of range." << std::endl;
     }
 #endif
-    return *_index_data[index];
-  }
+   return *_index_data[index];
+ }
   inline const size_type get_index(const Key& key) {
-    const dataptr_type& indexptr(member(key));
+    const dataptr_type& indexptr(this->member(key));
     if (indexptr) {
       return *indexptr;
-    }
+    }    
     const size_type new_index(_index_data.maxindex());
     const HashMapData<Key, size_type>* 
       hashptr(plainhashindextable_data::plainhashmap_data::insert(HashMapData<Key, size_type>(key, new_index)));

@@ -14,18 +14,38 @@
 
 void StairCaseMatrix::_eliminate(const size_type& ridx, const size_type& cidx, const size_type& cno) {
   const size_type n = rowdim();
-  if ((*this)(ridx,ridx) == ZERO) {
+  
+  if (is_zero((*this)(ridx,ridx))) {
+#ifdef SUPER_VERBOSE
+    std::cerr << "eraser = " << (*this)(ridx,ridx) << " == ZERO -> try colperm; row : " << ridx << ", col: " << ridx << std::endl;
+#endif
     for (size_type k = cidx; k < cidx + cno; ++k) {
-      if ((*this)(ridx,k) != ZERO) {
+      if (!is_zero((*this)(ridx,k))) {
 	(*this).swap_cols(ridx,k);
 	_coefficient *= MINUSONE;
+#ifdef SUPER_VERBOSE
+	std::cerr << "eraser = " << (*this)(ridx,ridx) << " == ZERO -> colperm successful; row : " << ridx << ", col: " << ridx << std::endl;
+#endif
 	return;
       }
     }
-    if ((*this)(ridx,ridx) == ZERO) {
+    if (is_zero((*this)(ridx,ridx))) {
+#ifdef SUPER_VERBOSE
+      std::cerr << "eraser = " << (*this)(ridx,ridx) << " == ZERO -> colperm unsuccessful; row : " << ridx << ", col: " << ridx << std::endl;
+#endif
       return;
     }
+#ifdef SUPER_VERBOSE
+    else {
+      std::cerr << "eraser = " << (*this)(ridx,ridx) << " != ZERO; row : " << ridx << ", col: " << ridx << std::endl;
+    }
+#endif
   }
+#ifdef SUPER_VERBOSE
+  else {
+    std::cerr << "eraser = " << (*this)(ridx,ridx) << " != ZERO; row : " << ridx << ", col: " << ridx << std::endl;
+  }
+#endif
   const Field& eraser = (*this)(ridx,ridx);
 #ifdef SUPER_VERBOSE
   std::cerr << "eraser = " << eraser << "; row : " << ridx << ", col: " << ridx << std::endl;
@@ -35,7 +55,7 @@ void StairCaseMatrix::_eliminate(const size_type& ridx, const size_type& cidx, c
 #ifdef SUPER_VERBOSE
     std::cerr << "delinquent = " << delinquent << "; row : " << ridx << ", col: " << j << std::endl;
 #endif
-    if (delinquent == ZERO) {
+    if (is_zero(delinquent)) {
       continue;
     }
     for (size_type k = ridx + 1; k < n; ++k) {
@@ -80,7 +100,7 @@ const Field det(const StairCaseMatrix& matrix) {
   Field result(ONE);
   for (size_type i = 0; i < matrix.coldim(); ++i) {
     result *= matrix(i,i);
-    if (result == ZERO) {
+    if (is_zero(result)) {
       return result;
     }
   }

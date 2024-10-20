@@ -35,6 +35,12 @@ void Matrix::row_resize(const size_type new_size, const Field& init_entry) {
     (*this)[i].resize(new_size,init_entry);
   }
 }
+Matrix& Matrix::canonicalize() {
+  for (size_type i = 0; i < coldim(); ++i) {
+    (*this)[i].canonicalize();
+  }
+  return *this;  
+}
 
 Matrix& Matrix::add(const Matrix& matrix) {
 #ifdef INDEX_CHECK

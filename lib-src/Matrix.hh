@@ -10,6 +10,7 @@
 #define MATRIX_HH
 
 #include <assert.h>
+#include <iostream>
 
 #include "Array.hh"
 
@@ -44,6 +45,7 @@ public:
   inline       Field& operator()(const size_type, const size_type);
   inline const Field& operator()(const size_type, const size_type) const;
   // in place operations:
+  Matrix& canonicalize();
   Matrix& add(const Matrix&);
   Matrix& scale(const Field&);
   Matrix& augment(const Matrix&);
@@ -60,6 +62,9 @@ public:
   Vector StackOfAllColumns() const;
   // iostream:
   std::ostream& pretty_print(std::ostream& ost) const;
+  // overload of istream with canonicalize:
+  inline std::istream& read(std::istream&);
+  inline friend std::istream& operator>>(std::istream&, Matrix&);
 };
 
 inline Matrix::Matrix() : matrix_data() {
@@ -107,6 +112,16 @@ inline const Field det(const Matrix& matrix) {
   assert(matrix.coldim() == matrix.rowdim());
 #endif
   return left_upper_det(matrix);
+}
+
+inline std::istream& Matrix::read(std::istream& ist) {
+  matrix_data::read(ist);
+  this->canonicalize();
+  return ist;
+}
+
+inline std::istream& operator>>(std::istream& ist, Matrix& m) {
+  return m.read(ist);
 }
 
 #endif

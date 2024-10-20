@@ -190,8 +190,8 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = wrap-gmp-gmpxx lib-src-reg lib-src src-reg src examples
-EXTRA_DIST = external/Makefile external/gmp-4.3.0.tar.gz \
-	external/cddlib-0.94f-TOPCOM.tar.gz
+EXTRA_DIST = external/Makefile external/gmp-5.0.5.tar.bz2 \
+	external/cddlib-0.94f-TOPCOM.tar.gz external/gmpxx-patch
 all: all-recursive
 
 .SUFFIXES:

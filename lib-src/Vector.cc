@@ -20,6 +20,13 @@ bool Vector::is_zero() const {
   }
   return true;
 }
+Vector& Vector::canonicalize() {
+  for (size_type index = 0; index < maxindex(); ++index) {
+    (*this)[index].canonicalize();
+  }
+  return *this;
+}
+
 Vector& Vector::add(const Vector& vector) {
 #ifdef INDEX_CHECK
   assert(maxindex() == vector.maxindex());

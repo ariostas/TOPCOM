@@ -11,6 +11,7 @@
 
 #include <assert.h>
 #include <cmath>
+#include <iostream>
 
 #include "Array.hh"
 #include "Field.hh"
@@ -33,6 +34,7 @@ public:
   // accessors:
   bool is_zero() const;
   // operations in place:
+  Vector& canonicalize();
   Vector& add(const Vector&);
   Vector& scale(const Field&);
   Vector& stack(const Vector&);
@@ -40,6 +42,9 @@ public:
   friend Field inner_product(const Vector&, const Vector&);
   // boolean expressions:
   friend bool lex_abs_compare(const Vector&, const Vector&, const size_type = 0);
+  // overload of istream with canonicalize:
+  inline std::istream& read(std::istream&);
+  inline friend std::istream& operator>>(std::istream&, Vector&);
 };
 
 // constructors:
@@ -66,6 +71,16 @@ inline Vector& Vector::operator=(const Vector& vector) {
   }
   vector_data::operator=(vector);
   return *this;
+}
+
+inline std::istream& Vector::read(std::istream& ist) {
+  vector_data::read(ist);
+  this->canonicalize();
+  return ist;
+}
+
+inline std::istream& operator>>(std::istream& ist, Vector& v) {
+  return v.read(ist);
 }
 
 #endif
