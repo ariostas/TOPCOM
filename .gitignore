@@ -1,0 +1,10 @@
+# build artifacts
+build/
+external/*_done
+external/gmp*/
+external/cdd*/
+external/qsopt_ex*/
+external/bin
+external/lib
+external/include
+external/share
