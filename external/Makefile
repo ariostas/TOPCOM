@@ -21,8 +21,8 @@ GMP_LIBS     = lib/libgmp.a
 CDD_LIBS     = lib/libcddgmp.a
 QSO_LIBS     = lib/libqsopt_ex.a
 
-GMP_VERSION = 6.2.1
-GMP_COMPRESSFORMAT = bz2
+GMP_VERSION = 6.3.0
+GMP_COMPRESSFORMAT = xz
 GMP_EXTRACTOPTIONS = -xvjf
 
 CDD_VERSION = 0.94j-TOPCOMb
@@ -60,7 +60,7 @@ $(GMP_DONE): $(GMP_DIR)
 	@echo ==============================================================================
 	@echo making gmp ...
 	@echo ==============================================================================
-	$(SH) -c 'cd $(GMP_DIR); ./configure CFLAGS="-std=c11 -O3 -g -pthread" CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)" --prefix=`pwd`/.. --libdir=`pwd`/../lib --enable-cxx --with-pic'
+	$(SH) -c 'cd $(GMP_DIR); autoreconf -i -s; ./configure CFLAGS="-std=c11 -O3 -g -pthread" CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)" --prefix=`pwd`/.. --libdir=`pwd`/../lib --enable-cxx --with-pic'
 	make -C $(GMP_DIR)
 	make -C $(GMP_DIR) check
 	make -C $(GMP_DIR) install
