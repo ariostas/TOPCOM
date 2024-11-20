@@ -10,7 +10,7 @@ project(TOPCOM
 )
 
 # Set up external dependencies
-execute_process(COMMAND make -C external)
+execute_process(COMMAND make -C ${CMAKE_CURRENT_SOURCE_DIR}/external)
 find_path(EXTERNAL_INCLUDES gmp.h cdd.h PATHS external/include NO_DEFAULT_PATH)
 find_library(GMP_PATH gmp PATHS external/lib NO_DEFAULT_PATH)
 find_library(GMPXX_PATH gmpxx PATHS external/lib NO_DEFAULT_PATH)
@@ -23,5 +23,9 @@ PACKAGE="${PROJECT_NAME}" VERSION="${PROJECT_VERSION}")
 
 add_subdirectory(lib-src)
 add_subdirectory(lib-src-reg)
-add_subdirectory(src)
-add_subdirectory(src-reg)
+
+# Only build the executables if this is the main project
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+  add_subdirectory(src)
+  add_subdirectory(src-reg)
+endif()
