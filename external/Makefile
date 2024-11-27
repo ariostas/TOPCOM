@@ -61,7 +61,7 @@ $(GMP_DONE): $(GMP_DIR)
 	@echo making gmp ...
 	@echo ==============================================================================
 	$(SH) -c 'cd $(GMP_DIR); autoreconf -i -s; ./configure CFLAGS="-std=c11 -O3 -g -pthread" CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)" --prefix=`pwd`/.. --libdir=`pwd`/../lib --enable-cxx --with-pic'
-	make -C $(GMP_DIR)
+	make -C $(GMP_DIR) -j4
 	make -C $(GMP_DIR) check
 	make -C $(GMP_DIR) install
 	@echo ==============================================================================
@@ -78,8 +78,8 @@ $(CDD_DONE): $(CDD_DIR)
 	@echo making cdd ...
 	@echo ==============================================================================
 	@echo LDFLAGS is $(LDFLAGS)
-	$(SH) -c 'cd $(CDD_DIR); ./configure CC=${CXX} CFLAGS="-std=c++11 -O3 -g -pthread" CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)" --prefix=`pwd`/.. --libdir=`pwd`/../lib '
-	make -C $(CDD_DIR)
+	$(SH) -c 'cd $(CDD_DIR); ./configure CC="${CXX}" CFLAGS="-std=c++11 -O3 -g -pthread" CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)" --prefix=`pwd`/.. --libdir=`pwd`/../lib '
+	make -C $(CDD_DIR) -j4
 	make -C $(CDD_DIR) install
 	@echo ==============================================================================
 	@echo ... done making cdd.
@@ -91,7 +91,7 @@ $(QSO_DONE): $(QSO_DIR)
 	@echo making qsopt_ex ...
 	@echo ==============================================================================
 	$(SH) -c 'cd $(QSO_DIR); ./configure CFLAGS="-O3 -g -pthread" CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)" --prefix=`pwd`/.. --libdir=`pwd`/../lib '
-	$(SH) -c 'cd $(QSO_DIR); make; make install'
+	$(SH) -c 'cd $(QSO_DIR); make -j4; make install'
 	@echo ==============================================================================
 	@echo ... done making qsopt_ex.
 	@echo ==============================================================================
