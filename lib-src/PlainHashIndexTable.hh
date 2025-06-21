@@ -126,7 +126,11 @@ namespace topcom {
 #ifdef DEBUG
       std::cerr << "getting index of key " << key << " in " << *this << " ..." << std::endl;
 #endif
-      if (_preprocessed) {      
+// We need to disable preprocessing if we're going to work with multiple point configurations
+#ifndef USE_PHIT_PREPROCESSING
+#define USE_PHIT_PREPROCESSING true
+#endif
+      if (_preprocessed && USE_PHIT_PREPROCESSING) {
 	auto finder(key_table_type::find(key));
 	if (finder != key_table_type::end()) {
 	  return finder->second;
