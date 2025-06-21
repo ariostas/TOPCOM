@@ -69,6 +69,7 @@ namespace topcom {
       // multi-threading:
       enum State { idle, hired, busy, done, stopped };
       State                                _state;
+      std::function<void(const SimplicialComplex&)> _callback;
     public:
       mutable std::condition_variable      worker_condition;
     private:
@@ -176,7 +177,8 @@ namespace topcom {
 					 const SymmetryGroup&,
 					 const bool = false,
 					 const bool = false,
-					 const bool = false);
+					 const bool = false,
+					 std::function<void(const SimplicialComplex&)> = nullptr);
     // destructor:
     inline ~SymmetricExtensionGraphMaster();
     // accessors for multi-threading control:
@@ -240,6 +242,7 @@ namespace topcom {
     void _init_workers();
     void _term();
     void _term_workers();
+    std::function<void(const SimplicialComplex&)> _callback;
     // stream output/input:
   };
 
@@ -250,7 +253,8 @@ namespace topcom {
 								      const SymmetryGroup& symmetries,
 								      const bool print_triangs,
 								      const bool only_fine_triangs,
-								      const bool find_minimal_triang) :
+								      const bool find_minimal_triang,
+									  std::function<void(const SimplicialComplex&)> callback) :
     _no(no),
     _rank(rank),
     _pointsptr(&points),
@@ -278,7 +282,8 @@ namespace topcom {
     _maxiter_coversimptighten(0),
     _open_nodes(),
     _current_workbuffersize(0UL),
-    _no_of_threads(1) {
+    _no_of_threads(1),
+    _callback(callback) {
     _init();
     _run();
   }
@@ -403,7 +408,8 @@ namespace topcom {
 				_callerptr->_only_fine_triangs,
 				_callerptr->_find_minimal_triang,
 				_callerptr->_node_budget,
-				&_callerptr->_current_workbuffersize);
+				&_callerptr->_current_workbuffersize,
+				_callback);
     _nodecount                = seg.nodecount();
     _totalcount               = seg.totalcount();
     _symcount                 = seg.symcount();

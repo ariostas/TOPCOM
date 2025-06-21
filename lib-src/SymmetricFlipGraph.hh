@@ -72,14 +72,24 @@ namespace topcom {
   public:
     inline virtual void operator()(const size_type no,
 				   const TriangNode& tn) const {}
+    inline virtual void operator()(const size_type no,
+				   const TriangNode& tn,
+				   std::function<void(const SimplicialComplex&)> callback) const {}
   };
 
   class __sbfs_cout_triang : public __sbfs_cout_triang_base {
   public:
     inline virtual void operator()(const size_type no,
-				   const TriangNode& tn) const {
-      std::cout << "T[" << tn.ID() << "] := ";
-      std::cout << (SimplicialComplex)tn << ";" << std::endl;
+				   const TriangNode& tn,
+				   std::function<void(const SimplicialComplex&)> callback) const {
+	  if (callback) {
+		callback((SimplicialComplex) tn);
+	  }
+	  else {
+		std::cout << "T[" << tn.ID() << "] := ";
+        std::cout << (SimplicialComplex)tn << ";" << std::endl;
+	  }
+      
     }
   };
 
@@ -397,6 +407,7 @@ namespace topcom {
     tnode_container_type            _all_triangs;
 #endif
   private:
+    std::function<void(const SimplicialComplex&)> _callback;
     const parameter_type            _no;
     const parameter_type            _rank;
     const PointConfiguration*       _pointsptr;
@@ -467,7 +478,8 @@ namespace topcom {
 			      const symmetryptr_datapair&,
 			      const Volumes*,
 			      const bool = false,
-			      const bool = false);
+			      const bool = false,
+                  std::function<void(const SimplicialComplex&)> = nullptr);
     // destructor:
     inline ~SymmetricFlipGraph();
     // results:
@@ -525,7 +537,8 @@ namespace topcom {
 						const symmetryptr_datapair& seed_symmetryptrs,
 						const Volumes*              voltableptr,
 						const bool                  print_triangs,
-						const bool                  only_fine_triangs) :
+						const bool                  only_fine_triangs,
+						std::function<void(const SimplicialComplex&)> callback) :
 #ifdef CHECK_NEW
     _all_triangs(),
 #endif
@@ -553,7 +566,8 @@ namespace topcom {
     _worker_orbits(std::min<size_type>(symmetries.size(), CommandlineOptions::no_of_threads())),
     _worker_symmetries(std::min<size_type>(symmetries.size(), CommandlineOptions::no_of_threads())),
     _no_of_busy_threads(0),
-    _no_of_waiting_threads(0) {
+    _no_of_waiting_threads(0),
+    _callback(callback) {
     _init();
   }
 

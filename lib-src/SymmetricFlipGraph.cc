@@ -573,7 +573,7 @@ namespace topcom {
       _rep_has_search_pred = true;
       _orbit.insert(tnode);
       if ((*_output_pred_ptr)(*_pointsptr, *_chiroptr, *_inctableptr, tnode)) {
-	(*_cout_triang_ptr)(_symcount, tnode);
+	(*_cout_triang_ptr)(_symcount, tnode, _callback);
       }
 
       // compute stabilizer, if possible using the index set representation:

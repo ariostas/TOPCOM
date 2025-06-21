@@ -32,7 +32,8 @@ namespace topcom {
     _maxiter_coversimptighten(0),
     _no_of_runs(0),
     _open_nodes(),
-    _state(idle) {
+    _state(idle),
+    _callback(segm._callback) {
   }
 
   SymmetricExtensionGraphMaster::Worker::Worker(const Worker& sw) :
@@ -49,7 +50,8 @@ namespace topcom {
     _maxiter_coversimptighten(0),
     _no_of_runs(sw._no_of_runs),
     _open_nodes(sw._open_nodes),
-    _state(idle) {
+    _state(idle),
+    _callback(sw._callback) {
   }
 
   void SymmetricExtensionGraphMaster::Worker::operator()() {
@@ -225,7 +227,8 @@ namespace topcom {
 				    _only_fine_triangs,
 				    _find_minimal_triang,
 				    _node_budget,
-				    &_current_workbuffersize);
+				    &_current_workbuffersize,
+                    _callback);
 	_nodecount                += seg.nodecount();
 	_totalcount               += seg.totalcount();
 	_symcount                 += seg.symcount();

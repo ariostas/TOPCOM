@@ -1412,11 +1412,17 @@ namespace topcom {
 	    // std::lock_guard<std::mutex> lock(IO_sync::mutex);
 	    // std::cout << "T[" << this->_ID << "," << this->_symcount + this->_current_symcount
 	    // 	      << "] := " << next_partial_triang << ";" << std::endl;
-	    _output_stream << "T[" << this->_ID
-			   << "," << this->_runID
-			   << "," << this->_symcount
-			   << "] := " << next_partial_triang << ";\n";
-	    output_results(std::cout);
+	    if (_callback) {
+			std::lock_guard<std::mutex> lock(IO_sync::mutex);
+			_callback((SimplicialComplex) next_partial_triang);
+		}
+		else {
+    	    _output_stream << "T[" << this->_ID
+    			   << "," << this->_runID
+    			   << "," << this->_symcount
+    			   << "] := " << next_partial_triang << ";\n";
+    	    output_results(std::cout);
+		}
 	  }
 	  if (!CommandlineOptions::skip_orbitcount()) {
 

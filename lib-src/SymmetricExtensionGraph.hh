@@ -219,7 +219,8 @@ namespace topcom {
 				   const bool,
 				   const bool,
 				   const size_type,
-				   const size_type*);
+				   const size_type*,
+				   std::function<void(const SimplicialComplex&)> = nullptr);
 
     // destructor:
     inline ~SymmetricExtensionGraph();
@@ -237,6 +238,7 @@ namespace topcom {
     inline size_type earlydeadendcount()        const { return _earlydeadendcount; }
     inline size_type mincard()                  const { return _mincard; }
     inline SimplicialComplex& mintriang()       const { return _mintriang; }
+    std::function<void(const SimplicialComplex&)> _callback;
 
     // effecticity of the iterative reduction of possible cover simplices:
     inline const size_type maxiter_coversimptighten() const { return _maxiter_coversimptighten; }
@@ -311,7 +313,8 @@ namespace topcom {
 							  const bool only_fine_triangs,
 							  const bool find_minimal_triang,
 							  const size_type node_budget,
-							  const size_type* current_workbuffersizeptr) :
+							  const size_type* current_workbuffersizeptr,
+							  std::function<void(const SimplicialComplex&)> callback) :
     _ID(ID),
     _runID(runID),
     _current_symcount(current_symcount),
@@ -350,7 +353,8 @@ namespace topcom {
     _iter_coversimptighten(0),
     _maxiter_coversimptighten(0),
     _is_old_symmetry_class(false),
-    _no_of_threads(1) {
+    _no_of_threads(1),
+    _callback(callback) {
 #ifdef CONSTRUCTOR_DEBUG
     std::cerr << "SymmetricExtensionGraph::SymmetricExtensionGraph(...)" << std::endl;
 #endif
