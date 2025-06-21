@@ -19,6 +19,7 @@
 
 #include <thread>
 #include <atomic>
+#include <functional>
 #include <condition_variable>
 
 #include "Global.hh"
