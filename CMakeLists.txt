@@ -48,7 +48,9 @@ find_path(CDD_INCLUDE_DIR cdd.h
         $ENV{CONDA_PREFIX}/include
         $ENV{CONDA_PREFIX}/include/cddlib
         /usr/include
+        /usr/include/cddlib
         /usr/local/include
+        /usr/local/include/cddlib
 )
 find_library(CDD_LIBRARY NAMES cdd
     PATHS
