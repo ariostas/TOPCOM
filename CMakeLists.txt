@@ -15,24 +15,28 @@ find_path(GMP_INCLUDE_DIR gmp.h
         $ENV{CONDA_PREFIX}/include
         /usr/include
         /usr/local/include
+        /opt/homebrew/include
 )
 find_library(GMP_LIBRARY NAMES gmp
     PATHS
         $ENV{CONDA_PREFIX}/lib
         /usr/lib
         /usr/local/lib
+        /opt/homebrew/lib
 )
 find_path(GMPXX_INCLUDE_DIR gmpxx.h
     PATHS
         $ENV{CONDA_PREFIX}/include
         /usr/include
         /usr/local/include
+        /opt/homebrew/include
 )
 find_library(GMPXX_LIBRARY NAMES gmpxx
     PATHS
         $ENV{CONDA_PREFIX}/lib
         /usr/lib
         /usr/local/lib
+        /opt/homebrew/lib
 )
 if (GMP_INCLUDE_DIR AND GMP_LIBRARY AND GMPXX_INCLUDE_DIR AND GMPXX_LIBRARY)
     message(STATUS "Found GMP and GMPXX")
@@ -51,18 +55,22 @@ find_path(CDD_INCLUDE_DIR cdd.h
         /usr/include/cddlib
         /usr/local/include
         /usr/local/include/cddlib
+        /opt/homebrew/include
+        /opt/homebrew/include/cddlib
 )
 find_library(CDD_LIBRARY NAMES cdd
     PATHS
         $ENV{CONDA_PREFIX}/lib
         /usr/lib
         /usr/local/lib
+        /opt/homebrew/lib
 )
 find_library(CDDGMP_LIBRARY NAMES cddgmp
     PATHS
         $ENV{CONDA_PREFIX}/lib
         /usr/lib
         /usr/local/lib
+        /opt/homebrew/lib
 )
 if (CDD_INCLUDE_DIR AND CDD_LIBRARY AND CDDGMP_LIBRARY)
     message(STATUS "Found CDD and CDDGMP")
