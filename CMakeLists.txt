@@ -9,6 +9,8 @@ project(TOPCOM
     CXX
 )
 
+find_package(Threads REQUIRED)
+
 # Try to find GMP and GMPXX
 find_path(GMP_INCLUDE_DIR gmp.h
     PATHS

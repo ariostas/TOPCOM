@@ -8,4 +8,4 @@ target_compile_features(topcom PUBLIC cxx_std_17)
 
 target_compile_definitions(topcom PUBLIC ${TOPCOM_DEFINITIONS})
 
-target_link_libraries(topcom PUBLIC ${GMP_LIBRARIES} ${CDD_LIBRARY} ${CDDGMP_LIBRARY})
+target_link_libraries(topcom PUBLIC ${GMP_LIBRARIES} ${CDD_LIBRARY} ${CDDGMP_LIBRARY} Threads::Threads)
