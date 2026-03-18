@@ -36,14 +36,14 @@ namespace topcom {
       const LabelSet usupport = upper.support();
       const LabelSet lsupport = lower.support();
       if (usupport.contains(i) && !lsupport.contains(i)) {
-	assert(!lower.empty());
+	if (lower.empty()) continue;
 	const SimplicialComplex common_link(link(*lower.begin()));
 	*this -= lower.join(common_link);
 	*this += upper.join(common_link);
 	break;
       }
       if (!usupport.contains(i) && lsupport.contains(i)) {
-	assert(!upper.empty());
+	if (upper.empty()) continue;
 	const SimplicialComplex common_link(link(*upper.begin()));
 	*this -= upper.join(common_link);
 	*this += lower.join(common_link);
