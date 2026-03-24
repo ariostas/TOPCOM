@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 #include <assert.h>
+#include <iostream>
 
 #include "Circuits.hh"
 
@@ -36,15 +37,26 @@ namespace topcom {
       const LabelSet usupport = upper.support();
       const LabelSet lsupport = lower.support();
       if (usupport.contains(i) && !lsupport.contains(i)) {
-	if (lower.empty()) continue;
-	const SimplicialComplex common_link(link(*lower.begin()));
+	if (lower.empty()) {
+	  continue;
+	}
+	// Copy the simplex before calling link() to avoid a dangling reference:
+	// link() may grow _index_table[card]._index_data via result.insert(), and
+	// when card == fl_card (circuit support size 3), this reallocates the very
+	// vector that *lower.begin() refers into, making the reference dangling.
+	const Simplex lower_facet(*lower.begin());
+	const SimplicialComplex common_link(link(lower_facet));
 	*this -= lower.join(common_link);
 	*this += upper.join(common_link);
 	break;
       }
       if (!usupport.contains(i) && lsupport.contains(i)) {
-	if (upper.empty()) continue;
-	const SimplicialComplex common_link(link(*upper.begin()));
+	if (upper.empty()) {
+	  continue;
+	}
+	// Same dangling reference fix as the upper branch above.
+	const Simplex upper_facet(*upper.begin());
+	const SimplicialComplex common_link(link(upper_facet));
 	*this -= upper.join(common_link);
 	*this += lower.join(common_link);
 	break;
